@@ -1,0 +1,271 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wdth,wght@75..125,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Chicle&family=Libre+Franklin:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Varela+Round&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Varela&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Varela&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+// _variables.scss
+$font-primary: 'Varela Round', sans-serif;
+$font-secondary: 'Anton', sans-serif;
+$background-color: pink;
+$dropdown-bg-color: rgb(255, 254, 254);
+$shadow-color: rgba(68, 68, 68, 0.4);
+$modal-header-footer-bg-color: #f8f9fa;
+$modal-border-color: #dee2e6;
+$btn-warning-bg-color: #ffc107;
+$breakpoint-md: 768px;
+
+
+// Define base and theme colors
+$themes: (
+  'light': (
+    'background': #ffffff,
+    'text': #323232,
+    'card': #f9f9f9
+  ),
+  'dark': (
+    'background': #323232,
+    'text': #ffffff,
+    'card': #424242
+  ),
+  // Add more themes as needed
+  'ocean': (
+    'background': #2a4d69,
+    'text': #fbfbfb,
+    'card': #4b86b4
+  ),
+  'sunset': (
+    'background': #ff9e9d,
+    'text': #5a2328,
+    'card': #ff7473
+  )
+);
+
+// Iterate through each theme to create classes
+@each $theme, $colors in $themes {
+  .theme-#{$theme} {
+    --bg-color: map-get($colors, 'background');
+    --text-color: map-get($colors, 'text');
+    --card-bg: map-get($colors, 'card');
+  }
+}
+
+*{
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-size: 18px;
+  font-family: $font-primary;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-secondary;
+}
+
+/*font-size for stock heading */
+.small-font h5 {
+  font-size: 0.8rem;
+}
+
+/*NAVBAR */
+.container-nav {
+  max-width: 1300px;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar-brand {
+  height: 1.5rem;
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+.card, .modal {
+  background-color: var(--card-bg);
+}
+
+
+.btn {
+  @apply
+    bg-amber-600
+    py-2 px-3 my-2
+    inline-block
+    text-white
+    rounded-md
+    border-2
+    border-amber-600;
+}
+
+.cart-icon-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.cart-counter {
+  position: absolute;
+  top: -20px;
+  right: -10px;
+  background-color: #40e0d0; /* Your theme red color */
+  color: white;
+  border-radius: 50%; /* Ensures a circular shape */
+ width: 1.6rem; /* Adjust as needed */
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.cart-dropdown {
+  position: absolute;
+  right: -20px;
+  width: 340px; /* Set a fixed width for the dropdown */
+  background-color: #fff;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  overflow: hidden; /* Ensures the child elements do not break the border radius */
+  z-index: 50; /* Ensure it's above other elements */
+}
+
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cart-item-image {
+
+  width: 120px;
+  object-fit: cover;
+  border-radius: 0.25rem; /* Slight rounding on image edges */
+}
+
+.text-name-cart{
+  font-size: 14.5px;
+  font-weight: 800;
+  color: red;
+
+}
+
+
+.cart-item-quantity {
+  display: flex;
+  align-items: center;
+}
+
+.cart-total {
+  margin-top: 1rem; /* Adjust as needed */
+  font-weight: bold;
+}
+
+
+.quantity-btn {
+  /* Styles for plus and minus buttons */
+  background-color: #d1d5db; /* Light gray */
+  border: none;
+  padding: 0.5rem;
+  margin: 0;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.quantity-display {
+  /* Styles for the quantity number display */
+  min-width: 1rem;
+  text-align: center;
+}
+
+.cart-total {
+  /* Styles for the total section */
+  border-top: 1px solid #e5e7eb; /* Light gray border */
+  margin-top: 1rem;
+  padding-top: 1rem;
+}
+
+.checkout-button {
+  /* Styles for the checkout button */
+  margin-top: 1rem;
+  background-color: #f59e0b; /* The bright yellow */
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  text-align: center;
+}
+
+/* global.css or equivalent */
+@media (max-width: 549px) {
+  .grid-cols-1-550px {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+}
+
+// Define your colors
+$colors: #FFC0CB, #FFF200, #98FF98, #A1CAF1, #E6E6FA;
+
+.banner-text {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 5rem;
+  line-height: 1;
+  display: inline-block; // Centers the inline elements within the text-center div
+
+  .word {
+    margin: 0 0.3em; // Adds spacing between words
+
+    // Style each letter with nth color from your color scheme
+    span {
+      &:nth-child(1) { color: nth($colors, 1); }
+      &:nth-child(2) { color: nth($colors, 2); }
+      &:nth-child(3) { color: nth($colors, 3); }
+      &:nth-child(4) { color: nth($colors, 4); }
+      &:nth-child(5) { color: nth($colors, 5); }
+    }
+  }
+}
+
+.nav-link .counter {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background-color: red;
+  color: white;
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 9999px;
+}
+
+
+.product-name {
+  font-size: 1.5rem; /* Adjust as needed */
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+$modal-bg-opacity: 0.5;
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, $modal-bg-opacity);
+  z-index: 50;
+}
+
+@mixin modal-content {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 1rem;
+  max-width: 800px;
+}

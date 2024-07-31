@@ -5,7 +5,7 @@ import { Suspense, createSignal } from "solid-js";
 import { IoCartOutline } from "solid-icons/io";
 import CartDropdown from "./components/CartDropdown";
 import { IProduct } from "./types/types";
-import "./app.css";
+import "./app.scss";
 
 export default function App() {
   const [darkTheme, setDarkTheme] = createSignal(false);
@@ -32,7 +32,7 @@ export default function App() {
                     {darkTheme() ? "dark_mode" : "light_mode"}
                   </button>
                   <a class="navbar-brand" href="/">
-                    <img src="src/assets/logo.svg" class="max-h-9 ml-2" alt="Pixie Pops Logo" />
+                    <img src="/logo.svg" class="max-h-9 ml-2" alt="Pixie Pops Logo" />
                   </a>
                 </div>
               </div>
