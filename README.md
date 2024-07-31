@@ -1,32 +1,106 @@
-# SolidStart
 
-Everything you need to build a Solid project, powered by [`solid-start`](https://start.solidjs.com);
+# 🍭 Fullstack Candy Shop with SolidStart 🍬
 
-## Creating a project
+Welcome to the **Fullstack Candy Shop** project! This project is built using **SolidStart**, a JavaScript framework designed to build SolidJS apps and deploy them to a variety of providers.
 
-```bash
-# create a new project in the current directory
-npm init solid@latest
+## 🌟 Features
 
-# create a new project in my-app
-npm init solid@latest my-app
+- 🛒 **Shopping Cart**: Add and manage your candy items.
+- 🌈 **Dark Mode**: Toggle between light and dark themes.
+- ⚛️ **SolidJS Components**: Efficient and reactive components.
+- 🚀 **Server-Side Rendering**: Fast initial load times.
+- 🎨 **Tailwind CSS**: Beautiful, responsive design.
+
+## 📂 Project Structure
+
+Here's a quick overview of the project's structure:
+
+```plaintext
+src/
+├── context/
+├── lib/
+├── routes/
+│   ├── api/
+│   ├── product/
+│   │   ├── [productId].tsx
+│   │   ├── about.tsx
+│   │   ├── cart.tsx
+│   │   ├── index.tsx
+├── styles/
+│   ├── _variables.scss
+│   ├── global.css
+│   ├── index.scss
+├── types/
+├── app.css
+├── app.tsx
+├── entry-client.tsx
+├── entry-server.tsx
+global.d.ts
+.editorconfig
+.env
 ```
 
-## Developing
+## 🚀 Getting Started
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Follow these steps to get the project up and running on your local machine:
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (v14 or above)
+- [npm](https://www.npmjs.com/) or [Yarn](https://yarnpkg.com/)
+
+### Installation
+
+1. **Clone the repository**:
+
+   ```bash
+   git clone https://github.com/andrenormanlang/fullstack-candy-shop-solid-start.git
+   cd fullstack-candy-shop-solid-start
+   ```
+
+2. **Install dependencies**:
+
+   ```bash
+   npm install
+   ```
+
+3. **Run the development server**:
+
+   ```bash
+   npm run dev
+   ```
+
+4. **Open your browser** and navigate to `http://localhost:3000`
+
+## 🎨 Styling
+
+This project uses **SCSS** for styling. Make sure to compile your SCSS files to CSS using the following command:
 
 ```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+npm run build:css
 ```
 
-## Building
+## 🛠️ Commands
 
-Solid apps are built with _presets_, which optimise your project for deployment to different environments.
+- **Start Development Server**: `npm run dev`
+- **Build for Production**: `npm run build`
+- **Compile SCSS**: `npm run build:css`
 
-By default, `npm run build` will generate a Node app that you can run with `npm start`. To use a different preset, add it to the `devDependencies` in `package.json` and specify in your `app.config.js`.
+## 🤝 Contributing
 
-## This project was created with the [Solid CLI](https://solid-cli.netlify.app)
+Contributions are welcome! Feel free to submit a pull request or open an issue.
+
+## 📜 License
+
+This project is licensed under the MIT License.
+
+## ✨ Acknowledgements
+
+- Thanks to the SolidJS and SolidStart teams for their amazing work!
+- Icons by [solid-icons](https://github.com/solid-icons)
+
+## 📬 Contact
+
+Feel free to reach out if you have any questions or suggestions!
+
+Happy Coding! 🎉
