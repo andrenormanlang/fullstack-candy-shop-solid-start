@@ -27,7 +27,24 @@ interface HomeProps {
 }
 
 const Card = (props: ParentProps<CardProps>) => (
-  <div class={props.class}>{props.children}</div>
+  <div class={`relative overflow-hidden rounded shadow-lg cursor-pointer ${props.class} border-2 border-gray-300 dark:border-gray-600`}
+    onClick={props.product && props.onClick ? () => props.onClick(props.product) : undefined}>
+    {props.children}
+    {props.product && (
+      <>
+        <img
+          src={props.product.images!.thumbnail}
+          alt={props.product.name}
+          class="w-full h-auto"
+        />
+        <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 transition-opacity duration-300 opacity-0 hover:bg-opacity-25">
+          <h1 class="text-white text-xl font-bold opacity-0 hover:opacity-100 transition-opacity duration-300">
+            {props.product.name}
+          </h1>
+        </div>
+      </>
+    )}
+  </div>
 );
 
 const fetchProducts = async () => {
@@ -204,5 +221,6 @@ export default function Home(props: HomeProps) {
     </div>
   );
 }
+
 
 
