@@ -19,6 +19,7 @@ import {
 import { Spinner, SpinnerType } from "solid-spinner";
 import { useCartContext } from "../context/CartContext";
 
+
 interface CardProps {
   product?: IProduct;
   onClick?: (product: IProduct) => void;
@@ -110,6 +111,7 @@ export default function Home(props: HomeProps) {
 
   return (
     <div class="flex justify-center items-center min-h-screen">
+
       <Show
         when={Array.isArray(products())}
         fallback={<Spinner type={SpinnerType.puff} stroke-opacity=".125" />}
