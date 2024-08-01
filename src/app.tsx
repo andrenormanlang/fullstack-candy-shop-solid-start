@@ -8,8 +8,6 @@ import { CartProvider } from "./context/CartContext";
 import { SearchProvider, useSearch } from "./context/SearchContext";
 import SearchBar from "./components/SearchBar";
 
-
-
 export default function App() {
   const [darkTheme, setDarkTheme] = createSignal(false);
 
@@ -78,4 +76,3 @@ export default function App() {
     </CartProvider>
   );
 }
-

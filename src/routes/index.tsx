@@ -137,8 +137,8 @@ export default function Home(props: HomeProps) {
   return (
     <div class="flex flex-col items-center min-h-screen">
       <Show when={searchQuery().length > 0}>
-        <p class="mt-4 text-center text-gray-900 dark:text-gray-100">
-          You have {filteredProducts().length} candies with the word "{searchQuery()}"
+        <p class="mt-4 text-center text-black dark:text-gray-600">
+          You have {filteredProducts().length} candies with the word "<span class="font-bold text-black dark:text-white">{searchQuery()}</span>"
         </p>
       </Show>
       <Show
@@ -237,6 +237,7 @@ export default function Home(props: HomeProps) {
     </div>
   );
 }
+
 
 
 
