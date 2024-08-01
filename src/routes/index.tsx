@@ -3,21 +3,17 @@ import {
   createSignal,
   Show,
   For,
-  createEffect,
 } from "solid-js";
 import { JSX } from "solid-js";
-
 import { useParams } from "@solidjs/router";
-
 import { ParentProps } from "solid-js";
-import { IProduct, IProductResponse } from "../types/types";
+import { IProduct } from "../types/types";
 import {
   AiFillCloseCircle,
   AiOutlineInfoCircle,
 } from "solid-icons/ai";
 import { Spinner, SpinnerType } from "solid-spinner";
 import { useCartContext } from "../context/CartContext";
-
 
 interface CardProps {
   product?: IProduct;
@@ -65,34 +61,15 @@ export default function Home(props: HomeProps) {
 
   const [isModalOpen, setModalOpen] = createSignal(false);
 
-  // const handleAddToCart = async () => {
-  //   const quantity = stockQuantity() || 0; // Ensure the quantity is never undefined
-  //   const product = selectedProduct();
-  //   if (product && quantity > 0) {
-  //     setStockQuantity(quantity - 1);
-  //     // Add the product to the cart
-  //     addToCart(product);
-  //     // Update the stock in the database
-  //     await updateStock(product.id.toString(), quantity - 1);
-  //   } else {
-  //     alert('Out of stock');
-  //   }
-  // };
-
-  const handleAddToCart = async () => {
-    const quantity = stockQuantity() || 0; // Ensure the quantity is never undefined
-    const product = selectedProduct();
-    if (product && quantity > 0) {
-      setStockQuantity(quantity - 1);
+  const handleAddToCart = async (product: IProduct) => {
+    if (product.stock_quantity > 0) {
       // Add the product to the cart
-      addToCart({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        images: product.images, // Ensure images are passed here
-      });
+      addToCart(product);
       // Update the stock in the database
-      await updateStock(product.id.toString(), quantity - 1);
+      await updateStock(product.id.toString(), product.stock_quantity - 1);
+      // Update the local stock quantity
+      product.stock_quantity -= 1;
+      setSelectedProduct({ ...product });
     } else {
       alert('Out of stock');
     }
@@ -170,7 +147,7 @@ export default function Home(props: HomeProps) {
                 <div class="flex justify-center items-center mt-4">
                   <button
                     class="btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                    onClick={() => handleAddToCart()}
+                    onClick={() => handleAddToCart(product)}
                   >
                     Add to Cart
                   </button>
@@ -198,7 +175,7 @@ export default function Home(props: HomeProps) {
                   </button>
                   <div class="flex items-center">
                     <h3 class="product-name text-2xl font-bold mb-4">
-                      {product.name}
+                      {product().name}
                     </h3>
                     <img
                       src={`https://bortakvall.se/${
@@ -216,7 +193,7 @@ export default function Home(props: HomeProps) {
                   <div class="flex justify-between">
                     <button
                       class="btn mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                      onClick={() => handleAddToCart()}
+                      onClick={() => handleAddToCart(product())}
                     >
                       Add to Cart
                     </button>
@@ -230,4 +207,3 @@ export default function Home(props: HomeProps) {
     </div>
   );
 }
-

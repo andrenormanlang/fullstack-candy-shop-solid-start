@@ -3,7 +3,7 @@ import { useCartContext } from "../context/CartContext";
 import { IoCartOutline } from "solid-icons/io";
 
 const CartDropdown = () => {
-  const { cartItems, addToCart } = useCartContext();
+  const { cartItems } = useCartContext();
   const [isOpen, setIsOpen] = createSignal(false);
 
   const toggleCart = () => setIsOpen(!isOpen());
@@ -20,13 +20,10 @@ const CartDropdown = () => {
         <div class="cart-dropdown">
           <For each={cartItems.items}>
             {(item) => (
-              <div
-                class="cart-item grid-cols-3
-              p-2 mb-2 bg-white rounded-lg shadow"
-              >
+              <div class="cart-item grid-cols-3 p-2 mb-2 bg-white rounded-lg shadow">
                 <div class="flex items-center">
                   <img
-                    src={`https://www.bortakvall.se/${item.images?.thumbnail}`}
+                    src={item.images.thumbnail}
                     alt={item.name}
                     class="cart-item-image mr-2"
                   />
@@ -36,11 +33,9 @@ const CartDropdown = () => {
                     </div>
                     <div class="flex items-center mt-2">
                       <div class="quantity-control flex items-center">
-                        <button class="quantity-btn">-</button>
                         <div class="quantity-display mx-2 text-sm text-left">
                           {item.quantity}
                         </div>
-                        <button class="quantity-btn">+</button>
                       </div>
                       <div class="mx-2 ml-3 mr-3 font-bold text-left">
                         <div class="text-sm">{item.price}kr</div>
