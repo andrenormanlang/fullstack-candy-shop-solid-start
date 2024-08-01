@@ -72,6 +72,7 @@ export default function Home(props: HomeProps) {
   const [products] = createResource<IProduct[]>(fetchProducts);
   const [productId, setProductId] = createSignal<string | undefined>(undefined);
   const [selectedProduct, setSelectedProduct] = createSignal<IProduct | undefined>();
+  const [searchQuery, setSearchQuery] = createSignal<string>("");
   const params = useParams();
   const { addToCart } = useCartContext();
   const [stockQuantity, setStockQuantity] = createSignal<number>(0); // Default value is 0
@@ -122,14 +123,33 @@ export default function Home(props: HomeProps) {
     setSelectedProduct(undefined); // Correctly setting the selectedProduct to undefined
   };
 
+  const filteredProducts = () => {
+    const query = searchQuery().toLowerCase();
+    const allProducts = products();
+    if (!allProducts) return [];
+    return allProducts.filter((product) =>
+      product.name.toLowerCase().includes(query) ||
+      product.description.toLowerCase().includes(query)
+    );
+  };
+
   return (
-    <div class="flex justify-center items-center min-h-screen">
+    <div class="flex flex-col items-center min-h-screen">
+      <input
+        type="text"
+        class="mb-4 p-2 border rounded"
+        placeholder="Search for candies..."
+        onInput={(e) => setSearchQuery(e.currentTarget.value)}
+      />
+      <Show when={searchQuery().length > 0}>
+        <p>You have {filteredProducts().length} candies with the word "{searchQuery()}"</p>
+      </Show>
       <Show
         when={Array.isArray(products())}
         fallback={<Spinner type={SpinnerType.puff} stroke-opacity=".125" />}
       >
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 p-4 w-full">
-          <For each={products()}>
+        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 p-4 w-full max-w-screen-lg mx-auto">
+          <For each={filteredProducts()}>
             {(product: IProduct) => (
               <Card class="card rounded shadow-lg transform transition duration-500 hover:scale-105 relative">
                 <div class="relative">
