@@ -1,4 +1,3 @@
-// context/CartContext.tsx
 import { createContext, useContext } from "solid-js";
 import { createStore } from "solid-js/store";
 import { JSX } from "solid-js/jsx-runtime";
