@@ -159,40 +159,37 @@ export default function Home(props: HomeProps) {
       </Show>
 
       <Show when={isModalOpen()}>
-        <div class="modal z-50 fixed inset-0">
-          <div class="modal-content bg-white p-5 rounded-lg max-w-lg w-full">
+        <div class="modal z-50 fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div class="modal-content bg-white dark:bg-neutral-800 p-5 rounded-lg max-w-md w-full relative">
             <Show when={selectedProduct()}>
               {(product) => (
                 <>
                   <button
                     onClick={closeModal}
-                    class="close-btn absolute top-15 p-3"
+                    class="close-btn absolute top-4 right-4 p-2"
                   >
                     <AiFillCloseCircle
-                      size={24}
-                      class="text-gray-800 hover:text-red-500 transition duration-300 ease-in-out"
+                      size={32}
+                      class="text-gray-800 dark:text-gray-200 hover:text-red-500 transition duration-300 ease-in-out"
                     />
                   </button>
-                  <div class="flex items-center">
-                    <h3 class="product-name text-2xl font-bold mb-4">
+                  <div class="flex flex-col items-center">
+                    <img
+                      src={`https://bortakvall.se/${product().images?.thumbnail}`}
+                      alt="product image"
+                      class="w-full max-w-xs mb-4 rounded-lg"
+                      style={{ 'max-width': '150px' }} // Adjust the max-width to reduce the image size
+                    />
+                    <h3 class="product-name text-2xl font-bold mb-4 text-gray-900 dark:text-white">
                       {product().name}
                     </h3>
-                    <img
-                      src={`https://bortakvall.se/${
-                        product().images?.thumbnail
-                      }`}
-                      alt="product image"
-                      class="mb-4" /* Add container class if needed */
-                    />
-                  </div>
-                  <p innerHTML={product().description} />
-                  <div class="flex justify-between items-center my-7">
-                    <p class="text-2xl">Stock: {product().stock_quantity}</p>
-                    <p class="text-2xl">Price: Only £{product().price}</p>
-                  </div>
-                  <div class="flex justify-between">
+                    <p class="text-sm text-center text-gray-700 dark:text-gray-300 mb-4" innerHTML={product().description} />
+                    <div class="flex justify-between items-center w-full my-4 px-4">
+                      <p class="text-xl font-medium text-gray-900 dark:text-white">Stock: {product().stock_quantity}</p>
+                      <p class="text-xl font-medium text-blue-600">Price: Only £{product().price}</p>
+                    </div>
                     <button
-                      class="btn mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                      class="btn bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-6 rounded-lg transition duration-300"
                       onClick={() => handleAddToCart(product())}
                     >
                       Add to Cart
@@ -207,4 +204,5 @@ export default function Home(props: HomeProps) {
     </div>
   );
 }
+
 
