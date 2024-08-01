@@ -17,7 +17,7 @@ const CartDropdown = () => {
         )}
       </button>
       <Show when={isOpen()}>
-      <div class="cart-dropdown bg-white dark:bg-neutral-800 rounded-lg shadow-lg p-4 max-h-screen overflow-y-auto">
+      <div class="cart-dropdown bg-white dark:bg-neutral-800 rounded-lg shadow-lg p-4 max-h-screen overflow-y-scroll">
       <For each={cartItems.items}>
             {(item) => (
               <div class="cart-item grid-cols-3 p-2 mb-2 bg-white dark:bg-neutral-700 rounded-lg shadow">

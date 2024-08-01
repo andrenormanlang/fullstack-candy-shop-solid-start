@@ -1,7 +1,7 @@
 import { MetaProvider, Title } from "@solidjs/meta";
 import { Router } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
-import { Suspense, createSignal, onCleanup } from "solid-js";
+import { Suspense, createEffect, createSignal, onMount } from "solid-js";
 import "./app.scss";
 import { ThemeProvider } from "./context/ThemeContext";
 import CartDropdown from "./components/CartDropdown";
@@ -12,16 +12,22 @@ export default function App() {
 
   function toggleTheme() {
     setDarkTheme(!darkTheme());
+  }
+
+  onMount(() => {
     if (darkTheme()) {
       document.body.classList.add("dark-mode");
     } else {
       document.body.classList.remove("dark-mode");
     }
-  }
+  });
 
-  // Cleanup theme class on unmount
-  onCleanup(() => {
-    document.body.classList.remove("dark-mode");
+  createEffect(() => {
+    if (darkTheme()) {
+      document.body.classList.add("dark-mode");
+    } else {
+      document.body.classList.remove("dark-mode");
+    }
   });
 
   return (
