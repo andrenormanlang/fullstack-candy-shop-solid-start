@@ -23,7 +23,7 @@ const CartDropdown = () => {
               <div class="cart-item grid-cols-3 p-2 mb-2 bg-white rounded-lg shadow">
                 <div class="flex items-center">
                   <img
-                    src={item.images.thumbnail}
+                    src={`https://bortakvall.se/${item.images.thumbnail}`}
                     alt={item.name}
                     class="cart-item-image mr-2"
                   />
