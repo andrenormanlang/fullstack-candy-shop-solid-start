@@ -20,8 +20,10 @@ const CartDropdown = () => {
         <div class="cart-dropdown">
           <For each={cartItems.items}>
             {(item) => (
-              <div class="cart-item grid-cols-3
-              p-2 mb-2 bg-white rounded-lg shadow">
+              <div
+                class="cart-item grid-cols-3
+              p-2 mb-2 bg-white rounded-lg shadow"
+              >
                 <div class="flex items-center">
                   <img
                     src={`https://www.bortakvall.se/${item.images?.thumbnail}`}
@@ -62,4 +64,3 @@ const CartDropdown = () => {
 };
 
 export default CartDropdown;
-

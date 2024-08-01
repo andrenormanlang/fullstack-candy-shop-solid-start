@@ -65,15 +65,34 @@ export default function Home(props: HomeProps) {
 
   const [isModalOpen, setModalOpen] = createSignal(false);
 
+  // const handleAddToCart = async () => {
+  //   const quantity = stockQuantity() || 0; // Ensure the quantity is never undefined
+  //   const product = selectedProduct();
+  //   if (product && quantity > 0) {
+  //     setStockQuantity(quantity - 1);
+  //     // Add the product to the cart
+  //     addToCart(product);
+  //     // Update the stock in the database
+  //     await updateStock(product.id.toString(), quantity - 1);
+  //   } else {
+  //     alert('Out of stock');
+  //   }
+  // };
+
   const handleAddToCart = async () => {
     const quantity = stockQuantity() || 0; // Ensure the quantity is never undefined
     const product = selectedProduct();
     if (product && quantity > 0) {
       setStockQuantity(quantity - 1);
       // Add the product to the cart
-      addToCart(product);
+      addToCart({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        images: product.images, // Ensure images are passed here
+      });
       // Update the stock in the database
-      await updateStock(product.id.toString(), quantity - 1); 
+      await updateStock(product.id.toString(), quantity - 1);
     } else {
       alert('Out of stock');
     }
