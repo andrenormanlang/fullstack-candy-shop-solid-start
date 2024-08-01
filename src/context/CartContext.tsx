@@ -1,4 +1,4 @@
-import { createContext, useContext } from "solid-js";
+import { createContext, useContext, createEffect, onMount } from "solid-js";
 import { createStore } from "solid-js/store";
 import { JSX } from "solid-js/jsx-runtime";
 import { IProduct } from "../types/types";
@@ -14,6 +14,8 @@ type CartState = {
   total: number;
 };
 
+const CART_STORAGE_KEY = "cartItems";
+
 export const CartContext = createContext<{
   cartItems: CartState;
   addToCart: (product: IProduct, quantity?: number) => void;
@@ -27,7 +29,25 @@ export function useCartContext() {
 }
 
 export function CartProvider(props: CartProviderProps) {
+  const loadCartFromStorage = (): CartState => {
+    if (typeof window !== 'undefined') {
+      const storedCart = localStorage.getItem(CART_STORAGE_KEY);
+      return storedCart ? JSON.parse(storedCart) : { items: [], total: 0 };
+    }
+    return { items: [], total: 0 };
+  };
+
   const [cartItems, setCartItems] = createStore<CartState>({ items: [], total: 0 });
+
+  // Use onMount to ensure this runs only on the client side
+  onMount(() => {
+    const initialCart = loadCartFromStorage();
+    setCartItems(initialCart);
+
+    createEffect(() => {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
+    });
+  });
 
   const updateStock = async (productId: number, newStock: number) => {
     try {
