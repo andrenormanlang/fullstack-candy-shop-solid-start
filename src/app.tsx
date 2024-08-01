@@ -3,24 +3,12 @@ import { Router } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
 import { Suspense, createEffect, createSignal, onMount } from "solid-js";
 import "./app.scss";
-import { ThemeProvider } from "./context/ThemeContext";
 import CartDropdown from "./components/CartDropdown";
 import { CartProvider } from "./context/CartContext";
 import { SearchProvider, useSearch } from "./context/SearchContext";
+import SearchBar from "./components/SearchBar";
 
-function SearchBar() {
-  const { searchQuery, setSearchQuery } = useSearch();
 
-  return (
-    <input
-      type="text"
-      class="w-full sm:w-auto mb-2 p-2 border rounded"
-      placeholder="Search for candies..."
-      value={searchQuery()}
-      onInput={(e) => setSearchQuery(e.currentTarget.value)}
-    />
-  );
-}
 
 export default function App() {
   const [darkTheme, setDarkTheme] = createSignal(false);
@@ -51,7 +39,7 @@ export default function App() {
         <div
           class={`w-full ${darkTheme() ? "bg-neutral-900 text-white" : "bg-white text-black"}`}
         >
-          <header class="bg-red-600 sticky top-0 z-10 p-4 text-xl flex items-center justify-between h-16">
+          <header class="bg-red-600 sticky top-0 z-10 p-4 text-xl flex items-center justify-between h-20">
             <div class="flex items-center">
               <button
                 onClick={toggleTheme}
@@ -63,14 +51,14 @@ export default function App() {
                 <img src="/logo.svg" class="max-h-9" alt="Pixie Pops Logo" />
               </a>
             </div>
-            <div class="hidden sm:flex items-center flex-grow justify-center">
+            <div class="hidden sm:flex items-center flex-grow justify-center mt-4 mb-4">
               <SearchBar />
             </div>
             <div class="flex items-center relative mr-4 mt-4">
               <CartDropdown />
             </div>
           </header>
-          <div class="sm:hidden p-4">
+          <div class="sm:hidden p-4 mt-4 mb-4">
             <SearchBar />
           </div>
 
@@ -90,3 +78,4 @@ export default function App() {
     </CartProvider>
   );
 }
+
