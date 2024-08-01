@@ -269,3 +269,21 @@ $modal-bg-opacity: 0.5;
   border-radius: 1rem;
   max-width: 800px;
 }
+
+/* Dark mode adjustments */
+.dark-mode .bg-white {
+  background-color: #1a202c !important; /* Tailwind dark background */
+}
+
+.dark-mode .text-black {
+  color: #ffffff !important; /* Tailwind dark text */
+}
+
+.dark-mode .cart-item {
+  background-color: #2d3748 !important; /* Tailwind dark background */
+}
+
+.cart-dropdown {
+  // max-height: 20rem; /* Adjust this value as needed */
+  overflow-y: auto;
+}
