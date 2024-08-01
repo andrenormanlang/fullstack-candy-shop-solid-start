@@ -1,6 +1,11 @@
-import { createContext, createSignal, useContext, JSX } from "solid-js";
+import { createContext, createSignal, useContext, JSX, Accessor, Setter } from "solid-js";
 
-const SearchContext = createContext();
+interface SearchContextType {
+  searchQuery: Accessor<string>;
+  setSearchQuery: Setter<string>;
+}
+
+const SearchContext = createContext<SearchContextType | undefined>(undefined);
 
 export function SearchProvider(props: { children: JSX.Element }) {
   const [searchQuery, setSearchQuery] = createSignal("");
@@ -12,6 +17,10 @@ export function SearchProvider(props: { children: JSX.Element }) {
   );
 }
 
-export function useSearch() {
-  return useContext(SearchContext);
+export function useSearch(): SearchContextType {
+  const context = useContext(SearchContext);
+  if (!context) {
+    throw new Error("useSearch must be used within a SearchProvider");
+  }
+  return context;
 }
