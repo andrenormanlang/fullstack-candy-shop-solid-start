@@ -13,7 +13,6 @@ import { ParentProps } from "solid-js";
 import { IProduct, IProductResponse } from "../types/types";
 import {
   AiFillCloseCircle,
-  AiOutlineCloseCircle,
   AiOutlineInfoCircle,
 } from "solid-icons/ai";
 import { Spinner, SpinnerType } from "solid-spinner";
@@ -68,12 +67,13 @@ export default function Home(props: HomeProps) {
 
   const handleAddToCart = async () => {
     const quantity = stockQuantity() || 0; // Ensure the quantity is never undefined
-    if (quantity > 0) {
+    const product = selectedProduct();
+    if (product && quantity > 0) {
       setStockQuantity(quantity - 1);
       // Add the product to the cart
-      addToCart(selectedProduct()!);
+      addToCart(product);
       // Update the stock in the database
-      await updateStock(selectedProduct()!.id, quantity - 1);
+      await updateStock(product.id.toString(), quantity - 1); 
     } else {
       alert('Out of stock');
     }
@@ -211,3 +211,4 @@ export default function Home(props: HomeProps) {
     </div>
   );
 }
+

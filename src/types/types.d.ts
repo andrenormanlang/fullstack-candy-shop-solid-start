@@ -1,15 +1,15 @@
 export type IProduct = {
-  id?: number,
-  name?: string,
+  id: number,
+  name: string,
   description?: string,
-  price?: number,
-  on_sale?: boolean,
-  images?: {
+  price: number,
+  on_sale: boolean,
+  images: {
       thumbnail: string,
       large: string,
   },
-  stock_status?: string,
-  stock_quantity?: number,
+  stock_status: string,
+  stock_quantity: number,
 }
 
 // POST request
