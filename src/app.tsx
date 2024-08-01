@@ -33,11 +33,11 @@ export default function App() {
   return (
     <CartProvider>
       <div
-        class={`container-nav container m-auto ${
+        class={`w-full ${
           darkTheme() ? "bg-neutral-900 text-white" : "bg-white text-black"
         }`}
       >
-        <header class="bg-red-600 sticky top-0 z-10 my-4 p-2 text-xl flex items-center justify-between">
+        <header class="bg-red-600 sticky top-0 z-10 p-2 text-xl flex items-center justify-between">
           <div>
             <div class="flex">
               <button
@@ -74,3 +74,4 @@ export default function App() {
     </CartProvider>
   );
 }
+

@@ -124,12 +124,11 @@ export default function Home(props: HomeProps) {
 
   return (
     <div class="flex justify-center items-center min-h-screen">
-
       <Show
         when={Array.isArray(products())}
         fallback={<Spinner type={SpinnerType.puff} stroke-opacity=".125" />}
       >
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 p-4 w-full max-w-6xl">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 p-4 w-full">
           <For each={products()}>
             {(product: IProduct) => (
               <Card class="card rounded shadow-lg transform transition duration-500 hover:scale-105 relative">
@@ -221,6 +220,7 @@ export default function Home(props: HomeProps) {
     </div>
   );
 }
+
 
 
 
