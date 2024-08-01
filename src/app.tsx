@@ -6,6 +6,21 @@ import "./app.scss";
 import { ThemeProvider } from "./context/ThemeContext";
 import CartDropdown from "./components/CartDropdown";
 import { CartProvider } from "./context/CartContext";
+import { SearchProvider, useSearch } from "./context/SearchContext";
+
+function SearchBar() {
+  const { searchQuery, setSearchQuery } = useSearch();
+
+  return (
+    <input
+      type="text"
+      class="mb-2 p-2 border rounded"
+      placeholder="Search for candies..."
+      value={searchQuery()}
+      onInput={(e) => setSearchQuery(e.currentTarget.value)}
+    />
+  );
+}
 
 export default function App() {
   const [darkTheme, setDarkTheme] = createSignal(false);
@@ -32,46 +47,46 @@ export default function App() {
 
   return (
     <CartProvider>
-      <div
-        class={`w-full ${
-          darkTheme() ? "bg-neutral-900 text-white" : "bg-white text-black"
-        }`}
-      >
-        <header class="bg-red-600 sticky top-0 z-10 p-2 text-xl flex items-center justify-between">
-          <div>
-            <div class="flex">
-              <button
-                onClick={toggleTheme}
-                class="material-symbols-outlined cursor-pointer ml-4"
-              >
-                {darkTheme() ? "dark_mode" : "light_mode"}
-              </button>
-              <a class="navbar-brand" href="/">
-                <img src="/logo.svg" class="max-h-9 ml-2" alt="Pixie Pops Logo" />
-              </a>
+      <SearchProvider>
+        <div
+          class={`w-full ${darkTheme() ? "bg-neutral-900 text-white" : "bg-white text-black"}`}
+        >
+          <header class="bg-red-600 sticky top-0 z-10 p-2 text-xl flex items-center justify-between">
+            <div>
+              <div class="flex">
+                <button
+                  onClick={toggleTheme}
+                  class="material-symbols-outlined cursor-pointer ml-4"
+                >
+                  {darkTheme() ? "dark_mode" : "light_mode"}
+                </button>
+                <a class="navbar-brand" href="/">
+                  <img src="/logo.svg" class="max-h-9 ml-2" alt="Pixie Pops Logo" />
+                </a>
+              </div>
             </div>
-          </div>
-          <nav>
-            <div class="mx-6 mt-5">
-              <CartDropdown />
-              <span class="mr-6 absolute top-0 right-0 rounded-full bg-blue-500 text-white px-2 text-xs"></span>
-            </div>
-          </nav>
-        </header>
+            <nav>
+              <div class="mx-6 mt-5">
+                <SearchBar />
+                <CartDropdown />
+                <span class="mr-6 absolute top-0 right-0 rounded-full bg-blue-500 text-white px-2 text-xs"></span>
+              </div>
+            </nav>
+          </header>
 
-        <div class="rounded-md text-center py-6">
-          <Router
-            root={(props) => (
-              <MetaProvider>
-                <Suspense>{props.children}</Suspense>
-              </MetaProvider>
-            )}
-          >
-            <FileRoutes />
-          </Router>
+          <div class="rounded-md text-center py-6">
+            <Router
+              root={(props) => (
+                <MetaProvider>
+                  <Suspense>{props.children}</Suspense>
+                </MetaProvider>
+              )}
+            >
+              <FileRoutes />
+            </Router>
+          </div>
         </div>
-      </div>
+      </SearchProvider>
     </CartProvider>
   );
 }
-

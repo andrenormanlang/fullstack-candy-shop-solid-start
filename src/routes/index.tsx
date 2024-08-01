@@ -14,6 +14,7 @@ import {
 } from "solid-icons/ai";
 import { Spinner, SpinnerType } from "solid-spinner";
 import { useCartContext } from "../context/CartContext";
+import { useSearch } from "../context/SearchContext";
 
 interface CardProps {
   product?: IProduct;
@@ -72,7 +73,7 @@ export default function Home(props: HomeProps) {
   const [products] = createResource<IProduct[]>(fetchProducts);
   const [productId, setProductId] = createSignal<string | undefined>(undefined);
   const [selectedProduct, setSelectedProduct] = createSignal<IProduct | undefined>();
-  const [searchQuery, setSearchQuery] = createSignal<string>("");
+  const { searchQuery } = useSearch();
   const params = useParams();
   const { addToCart } = useCartContext();
   const [stockQuantity, setStockQuantity] = createSignal<number>(0); // Default value is 0
@@ -135,20 +136,16 @@ export default function Home(props: HomeProps) {
 
   return (
     <div class="flex flex-col items-center min-h-screen">
-      <input
-        type="text"
-        class="mb-4 p-2 border rounded"
-        placeholder="Search for candies..."
-        onInput={(e) => setSearchQuery(e.currentTarget.value)}
-      />
       <Show when={searchQuery().length > 0}>
-        <p>You have {filteredProducts().length} candies with the word "{searchQuery()}"</p>
+        <p class="mt-4 text-center text-gray-900 dark:text-gray-100">
+          You have {filteredProducts().length} candies with the word "{searchQuery()}"
+        </p>
       </Show>
       <Show
         when={Array.isArray(products())}
         fallback={<Spinner type={SpinnerType.puff} stroke-opacity=".125" />}
       >
-        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 p-4 w-full max-w-screen-lg mx-auto">
+        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 p-4 w-full max-w-screen-lg mx-auto mt-6">
           <For each={filteredProducts()}>
             {(product: IProduct) => (
               <Card class="card rounded shadow-lg transform transition duration-500 hover:scale-105 relative">
@@ -214,7 +211,7 @@ export default function Home(props: HomeProps) {
                       src={`https://bortakvall.se/${product().images?.thumbnail}`}
                       alt="product image"
                       class="w-full max-w-xs mb-4 rounded-lg"
-                      style={{ 'max-width': '150px' }} // Adjust the max-width to reduce the image size
+                      style={{ 'max-width': "150px" }} // Adjust the max-width to reduce the image size
                     />
                     <h3 class="product-name text-2xl font-bold mb-4 text-gray-900 dark:text-white">
                       {product().name}
@@ -240,6 +237,7 @@ export default function Home(props: HomeProps) {
     </div>
   );
 }
+
 
 
 
