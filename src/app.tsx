@@ -51,7 +51,7 @@ export default function App() {
         <div
           class={`w-full ${darkTheme() ? "bg-neutral-900 text-white" : "bg-white text-black"}`}
         >
-          <header class="bg-red-600 sticky top-0 z-10 p-2 text-xl flex items-center justify-between">
+          <header class="bg-red-600 sticky top-0 z-10 p-4 text-xl flex items-center justify-between h-16">
             <div class="flex items-center">
               <button
                 onClick={toggleTheme}
@@ -66,11 +66,11 @@ export default function App() {
             <div class="hidden sm:flex items-center flex-grow justify-center">
               <SearchBar />
             </div>
-            <div class="flex items-center relative">
+            <div class="flex items-center relative mr-4 mt-4">
               <CartDropdown />
             </div>
           </header>
-          <div class="sm:hidden p-2">
+          <div class="sm:hidden p-4">
             <SearchBar />
           </div>
 
