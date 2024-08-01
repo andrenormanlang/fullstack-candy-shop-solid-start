@@ -14,7 +14,7 @@ function SearchBar() {
   return (
     <input
       type="text"
-      class="mb-2 p-2 border rounded"
+      class="w-full sm:w-auto mb-2 p-2 border rounded"
       placeholder="Search for candies..."
       value={searchQuery()}
       onInput={(e) => setSearchQuery(e.currentTarget.value)}
@@ -52,27 +52,27 @@ export default function App() {
           class={`w-full ${darkTheme() ? "bg-neutral-900 text-white" : "bg-white text-black"}`}
         >
           <header class="bg-red-600 sticky top-0 z-10 p-2 text-xl flex items-center justify-between">
-            <div>
-              <div class="flex">
-                <button
-                  onClick={toggleTheme}
-                  class="material-symbols-outlined cursor-pointer ml-4"
-                >
-                  {darkTheme() ? "dark_mode" : "light_mode"}
-                </button>
-                <a class="navbar-brand" href="/">
-                  <img src="/logo.svg" class="max-h-9 ml-2" alt="Pixie Pops Logo" />
-                </a>
-              </div>
+            <div class="flex items-center">
+              <button
+                onClick={toggleTheme}
+                class="material-symbols-outlined cursor-pointer ml-4"
+              >
+                {darkTheme() ? "dark_mode" : "light_mode"}
+              </button>
+              <a class="navbar-brand ml-2" href="/">
+                <img src="/logo.svg" class="max-h-9" alt="Pixie Pops Logo" />
+              </a>
             </div>
-            <nav>
-              <div class="mx-6 mt-5">
-                <SearchBar />
-                <CartDropdown />
-                <span class="mr-6 absolute top-0 right-0 rounded-full bg-blue-500 text-white px-2 text-xs"></span>
-              </div>
-            </nav>
+            <div class="hidden sm:flex items-center flex-grow justify-center">
+              <SearchBar />
+            </div>
+            <div class="flex items-center relative">
+              <CartDropdown />
+            </div>
           </header>
+          <div class="sm:hidden p-2">
+            <SearchBar />
+          </div>
 
           <div class="rounded-md text-center py-6">
             <Router
