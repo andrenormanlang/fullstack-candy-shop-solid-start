@@ -56,7 +56,7 @@ export default function App() {
               <CartDropdown />
             </div>
           </header>
-          <div class="sm:hidden p-4 mt-4 mb-4">
+          <div class="sm:hidden p-4 mt-4">
             <SearchBar />
           </div>
 

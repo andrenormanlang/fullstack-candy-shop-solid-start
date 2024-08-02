@@ -137,7 +137,7 @@ export default function Home(props: HomeProps) {
   return (
     <div class="flex flex-col items-center min-h-screen">
       <Show when={searchQuery().length > 0}>
-        <p class="mt-4 text-center text-black dark:text-gray-600">
+        <p class="text-center text-black dark:text-gray-600">
           You have {filteredProducts().length} candies with the word "<span class="font-bold text-black dark:text-white">{searchQuery()}</span>"
         </p>
       </Show>
@@ -145,7 +145,7 @@ export default function Home(props: HomeProps) {
         when={Array.isArray(products())}
         fallback={<Spinner type={SpinnerType.puff} stroke-opacity=".125" />}
       >
-        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 p-4 w-full max-w-screen-lg mx-auto mt-6">
+        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 p-4 w-full max-w-screen-lg mx-auto mt-2">
           <For each={filteredProducts()}>
             {(product: IProduct) => (
               <Card class="card rounded shadow-lg transform transition duration-500 hover:scale-105 relative">
