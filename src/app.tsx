@@ -7,6 +7,7 @@ import CartDropdown from "./components/CartDropdown";
 import { CartProvider } from "./context/CartContext";
 import { SearchProvider, useSearch } from "./context/SearchContext";
 import SearchBar from "./components/SearchBar";
+import ProductList from "./components/ProductList"; // Import the ProductList component
 
 export default function App() {
   const [darkTheme, setDarkTheme] = createSignal(false);
@@ -71,6 +72,10 @@ export default function App() {
               <FileRoutes />
             </Router>
           </div>
+
+          {/* Add the ProductList component here */}
+          <ProductList />
+
         </div>
       </SearchProvider>
     </CartProvider>

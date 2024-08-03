@@ -3,8 +3,8 @@ import {
   createSignal,
   Show,
   For,
+  JSX
 } from "solid-js";
-import { JSX } from "solid-js";
 import { useParams } from "@solidjs/router";
 import { ParentProps } from "solid-js";
 import { IProduct } from "../types/types";
@@ -75,7 +75,7 @@ export default function Home(props: HomeProps) {
   const [selectedProduct, setSelectedProduct] = createSignal<IProduct | undefined>();
   const { searchQuery } = useSearch();
   const params = useParams();
-  const { addToCart } = useCartContext();
+  const { addToCart, cartItems, removeFromCart } = useCartContext();
   const [stockQuantity, setStockQuantity] = createSignal<number>(0); // Default value is 0
 
   const [isModalOpen, setModalOpen] = createSignal(false);
@@ -91,6 +91,21 @@ export default function Home(props: HomeProps) {
       setSelectedProduct({ ...product });
     } else {
       alert('Out of stock');
+    }
+  };
+
+  const handleRemoveFromCart = async (product: IProduct) => {
+    // Check if the product exists in the cart
+    const cartProduct = cartItems.items.find((item) => item.id === product.id);
+
+    if (cartProduct && cartProduct.quantity > 0) {
+      // Remove the product from the cart
+      removeFromCart(product.id);
+      // Update the stock in the database
+      await updateStock(product.id.toString(), product.stock_quantity + 1);
+      // Update the local stock quantity
+      product.stock_quantity += 1;
+      setSelectedProduct({ ...product });
     }
   };
 
@@ -184,6 +199,12 @@ export default function Home(props: HomeProps) {
                   >
                     Add to Cart
                   </button>
+                  {/* <button
+                    class="btn bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2"
+                    onClick={() => handleRemoveFromCart(product)}
+                  >
+                    Remove from Cart
+                  </button> */}
                 </div>
               </Card>
             )}
@@ -237,9 +258,3 @@ export default function Home(props: HomeProps) {
     </div>
   );
 }
-
-
-
-
-
-

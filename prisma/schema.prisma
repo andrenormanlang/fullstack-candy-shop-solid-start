@@ -1,12 +1,12 @@
+datasource db {
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("PRISMA_SHADOW_DATABASE_URL")
+}
+
 generator client {
   provider = "prisma-client-js"
 }
-
-datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
-}
-
 
 model Product {
   id             Int         @id @default(autoincrement()) @db.UnsignedInt
@@ -18,6 +18,7 @@ model Product {
   stock_status   String
   stock_quantity Int         @db.UnsignedInt
   items          OrderItem[]
+  CartItem       CartItem[]
 }
 
 model Order {
@@ -45,6 +46,15 @@ model OrderItem {
   order_id   Int     @db.UnsignedInt
   product    Product @relation(fields: [product_id], references: [id])
   order      Order   @relation(fields: [order_id], references: [id])
+
   @@index([order_id], map: "OrderItem_order_id_fkey")
   @@index([product_id], map: "OrderItem_product_id_fkey")
+}
+
+model CartItem {
+  id         Int      @id @default(autoincrement()) @db.UnsignedInt
+  product_id Int      @db.UnsignedInt
+  quantity   Int      @db.UnsignedInt
+  product    Product  @relation(fields: [product_id], references: [id])
+  created_at DateTime @default(now())
 }
