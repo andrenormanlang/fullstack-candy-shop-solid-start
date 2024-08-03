@@ -20,16 +20,36 @@ export async function POST(event: APIEvent) {
       return json({ status: "fail", message: "Product not found." }, { status: 404 });
     }
 
-    const cartItem = await prisma.cartItem.create({
-      data: {
-        product_id,
-        quantity,
-      },
+    if (product.stock_quantity < quantity) {
+      return json({ status: "fail", message: "Insufficient stock." }, { status: 400 });
+    }
+
+    const existingItem = await prisma.cartItem.findFirst({
+      where: { product_id },
     });
 
-    return json({ status: "success", data: cartItem }, { status: 201 });
+    if (existingItem) {
+      await prisma.cartItem.update({
+        where: { id: existingItem.id },
+        data: { quantity: existingItem.quantity + quantity },
+      });
+    } else {
+      await prisma.cartItem.create({
+        data: {
+          product_id,
+          quantity,
+        },
+      });
+    }
+
+    await prisma.product.update({
+      where: { id: product_id },
+      data: { stock_quantity: product.stock_quantity - quantity },
+    });
+
+    return json({ status: "success" }, { status: 201 });
   } catch (error) {
-    console.error("Error creating cart item", error);
+    console.error("Error adding to cart", error);
     return json({ status: "error", message: "Something went wrong" }, { status: 500 });
   }
 }

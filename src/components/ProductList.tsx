@@ -1,3 +1,4 @@
+// ProductList.tsx
 import { createSignal, onMount, For, Show } from "solid-js";
 import { IProduct } from "../types/types";
 import ProductCard from "./ProductCard";
@@ -10,7 +11,7 @@ const ProductList = () => {
   const [products, setProducts] = createSignal<IProduct[]>([]);
   const [isModalOpen, setModalOpen] = createSignal(false);
   const [selectedProduct, setSelectedProduct] = createSignal<IProduct | undefined>();
-  const { addToCart } = useCartContext();
+  const { addToCart, updateCartItem, removeFromCart } = useCartContext();
   const { searchQuery } = useSearch();
 
   const fetchProducts = async () => {
@@ -34,16 +35,38 @@ const ProductList = () => {
 
   const handleAddToCart = async (product: IProduct) => {
     if (product.stock_quantity > 0) {
-      addToCart(product);
-      await updateStock(product.id.toString(), product.stock_quantity - 1);
+      await addToCart(product);
+      await updateStock(product.id, product.stock_quantity - 1);
       product.stock_quantity -= 1;
-      setSelectedProduct({ ...product });
+      setProducts([...products()]);
     } else {
       alert('Out of stock');
     }
   };
 
-  const updateStock = async (productId: string, newStock: number) => {
+  const handleUpdateCartItem = async (id: number, quantity: number) => {
+    await updateCartItem(id, quantity);
+    const updatedProducts = products().map((product) => {
+      if (product.id === id) {
+        product.stock_quantity -= quantity;
+      }
+      return product;
+    });
+    setProducts(updatedProducts);
+  };
+
+  const handleRemoveFromCart = async (id: number, quantity: number) => {
+    await removeFromCart(id, quantity);
+    const updatedProducts = products().map((product) => {
+      if (product.id === id) {
+        product.stock_quantity += quantity;
+      }
+      return product;
+    });
+    setProducts(updatedProducts);
+  };
+
+  const updateStock = async (productId: number, newStock: number) => {
     try {
       await fetch(`/api/products/${productId}`, {
         method: 'PUT',
@@ -94,7 +117,7 @@ const ProductList = () => {
               <ProductCard
                 product={product}
                 openModal={openModal}
-                handleAddToCart={handleAddToCart}
+                handleAddToCart={handleAddToCart}  // Pass this function as a prop
               />
             )}
           </For>
@@ -148,3 +171,5 @@ const ProductList = () => {
 };
 
 export default ProductList;
+
+

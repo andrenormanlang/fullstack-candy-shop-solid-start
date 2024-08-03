@@ -58,13 +58,16 @@ const CartDropdown = () => {
   };
 
   const handleCheckout = () => {
-    setShowCheckoutModal(true);
-    setIsOpen(false);
+    if (cartItems.total === 0) {
+      window.location.href = "/";
+    } else {
+      setShowCheckoutModal(true);
+      setIsOpen(false);
+    }
   };
 
   const handleProceedToForm = () => {
     setShowCheckoutModal(false);
-    // Redirect to form or perform form action
   };
 
   const handleOrderMore = () => {
@@ -89,7 +92,7 @@ const CartDropdown = () => {
         </Show>
       </button>
       <Show when={isOpen()}>
-        <div class="cart-dropdown bg-white dark:bg-neutral-800 rounded-lg shadow-lg p-4 max-h-screen overflow-y-scroll mt-2 mx-2" style={{ width: '350px' }}>
+        <div class="cart-dropdown bg-white dark:bg-neutral-800 rounded-lg shadow-lg p-4 max-h-96 overflow-y-auto mt-2 mx-2" style={{ width: '350px' }}>
           <For each={cartItems.items}>
             {(item) => (
               <div class="cart-item grid-cols-3 p-2 mb-2 bg-white dark:bg-neutral-700 rounded-lg shadow">
@@ -123,7 +126,7 @@ const CartDropdown = () => {
             )}
           </For>
           <div class="cart-total p-2 text-center text-black dark:text-white">
-            Total: £{cartItems.total.toFixed(2)}
+            Total: {cartItems.total.toFixed(2)} kr
           </div>
           <button class="checkout-button block p-2 w-auto mx-auto text-white bg-yellow-500 rounded-lg mb-2" onClick={handleCheckout}>
             To checkout
@@ -146,7 +149,7 @@ const CartDropdown = () => {
         <div class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-40">
           <div class="modal-content bg-white p-8 rounded shadow-lg max-w-lg w-full">
             <h2 class="text-2xl font-bold mb-4 text-center">Checkout Summary</h2>
-            <div class="flex flex-col gap-4 mb-4">
+            <div class="flex flex-col gap-4 mb-4 max-h-96 overflow-y-auto">
               <For each={cartItems.items}>
                 {(item) => (
                   <div class="flex items-center justify-between bg-gray-100 dark:bg-gray-700 p-4 rounded-lg shadow border dark:border-gray-600">
@@ -170,7 +173,7 @@ const CartDropdown = () => {
                 )}
               </For>
             </div>
-            <div class="text-center text-xl font-bold mb-4">Total: {(cartItems.total).toFixed(2)} kr</div>
+            <div class="text-center text-xl font-bold mb-4">Total: {cartItems.total.toFixed(2)} kr</div>
             <div class="flex gap-4">
               <button class="bg-blue-500 text-white p-2 rounded flex-1" onClick={handleProceedToForm}>Proceed to Form</button>
               <button class="bg-gray-500 text-white p-2 rounded flex-1" onClick={handleOrderMore}>Order More</button>

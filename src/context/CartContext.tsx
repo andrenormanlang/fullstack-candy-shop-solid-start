@@ -1,3 +1,4 @@
+// CartContext.tsx
 import { createContext, useContext, createEffect, createSignal, onMount } from "solid-js";
 import { createStore } from "solid-js/store";
 import { JSX } from "solid-js/jsx-runtime";
@@ -63,74 +64,22 @@ export function CartProvider(props: CartProviderProps) {
     setCartItems('total', calculateTotal(cartItems.items));
   };
 
-  const updateStock = async (productId: number, newStock: number) => {
+  const addToCart = async (product: IProduct, quantity = 1) => {
     try {
-      await fetch(`/api/products/${productId}`, {
-        method: 'PUT',
+      const response = await fetch('/api/cart/add', {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ stock_quantity: newStock }),
+        body: JSON.stringify({ product_id: product.id, quantity }),
       });
+      const result = await response.json();
+      if (result.status === "success") {
+        await loadCartFromAPI();
+      }
     } catch (error) {
-      console.error("Failed to update stock:", error);
+      console.error("Failed to add to cart:", error);
     }
-  };
-
-  const addToCart = async (product: IProduct, quantity = 1) => {
-    if (product.stock_quantity < quantity) {
-      alert("Out of stock");
-      return;
-    }
-
-    const existingItem = cartItems.items.find((item) => item.product.id === product.id);
-
-    if (existingItem) {
-      const newQuantity = existingItem.quantity + quantity;
-      if (newQuantity > product.stock_quantity) {
-        alert(`Only ${product.stock_quantity} items in stock`);
-        return;
-      }
-
-      await updateCartItem(existingItem.id, newQuantity);
-    } else {
-      const newItem = {
-        id: product.id,
-        product_id: product.id,
-        product,
-        quantity,
-        created_at: new Date().toISOString(),
-      };
-
-      try {
-        const response = await fetch('/api/cart/add', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            product_id: product.id,
-            quantity,
-          }),
-        });
-
-        const result = await response.json();
-        if (result.status === "success") {
-          setCartItems((prevCartItems) => {
-            const updatedItems = [...prevCartItems.items, newItem];
-            return {
-              items: updatedItems,
-              total: calculateTotal(updatedItems),
-            };
-          });
-          updateStock(product.id, product.stock_quantity - quantity);
-        }
-      } catch (error) {
-        console.error("Failed to add to cart in DB:", error);
-      }
-    }
-
-    updateTotal();
   };
 
   const updateCartItem = async (id: number, quantity: number) => {
@@ -142,62 +91,31 @@ export function CartProvider(props: CartProviderProps) {
         },
         body: JSON.stringify({ id, quantity }),
       });
-
       const result = await response.json();
       if (result.status === "success") {
-        setCartItems((prevCartItems) => {
-          const updatedItems = prevCartItems.items.map((item) =>
-            item.id === id ? { ...item, quantity } : item
-          );
-          return {
-            items: updatedItems,
-            total: calculateTotal(updatedItems),
-          };
-        });
+        await loadCartFromAPI();
       }
     } catch (error) {
       console.error("Failed to update cart item:", error);
     }
-
-    updateTotal();
   };
 
   const removeFromCart = async (id: number, quantity = 1) => {
-    const existingItem = cartItems.items.find((item) => item.id === id);
-
-    if (existingItem) {
-      const newQuantity = existingItem.quantity - quantity;
-
-      if (newQuantity <= 0) {
-        try {
-          const response = await fetch('/api/cart/remove', {
-            method: 'DELETE',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ id }),
-          });
-
-          const result = await response.json();
-          if (result.status === "success") {
-            setCartItems((prevCartItems) => {
-              const updatedItems = prevCartItems.items.filter((item) => item.id !== id);
-              return {
-                items: updatedItems,
-                total: calculateTotal(updatedItems),
-              };
-            });
-            updateStock(existingItem.product.id, existingItem.product.stock_quantity + existingItem.quantity);
-          }
-        } catch (error) {
-          console.error("Failed to remove cart item in DB:", error);
-        }
-      } else {
-        await updateCartItem(id, newQuantity);
+    try {
+      const response = await fetch('/api/cart/remove', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id, quantity }),
+      });
+      const result = await response.json();
+      if (result.status === "success") {
+        await loadCartFromAPI();
       }
+    } catch (error) {
+      console.error("Failed to remove from cart:", error);
     }
-
-    updateTotal();
   };
 
   const clearCart = async () => {
@@ -205,17 +123,12 @@ export function CartProvider(props: CartProviderProps) {
       const response = await fetch('/api/cart/clear', {
         method: 'POST',
       });
-
       const result = await response.json();
       if (result.status === "success") {
-        cartItems.items.forEach(item => {
-          updateStock(item.product.id, item.product.stock_quantity + item.quantity);
-        });
-
-        setCartItems({ items: [], total: 0 });
+        await loadCartFromAPI();
       }
     } catch (error) {
-      console.error("Failed to clear cart in DB:", error);
+      console.error("Failed to clear cart:", error);
     }
   };
 
@@ -225,4 +138,3 @@ export function CartProvider(props: CartProviderProps) {
     </CartContext.Provider>
   );
 }
-

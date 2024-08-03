@@ -1,10 +1,11 @@
+// ProductCard.tsx
 import { IProduct } from "../types/types";
 import { AiOutlineInfoCircle } from "solid-icons/ai";
 
 interface ProductCardProps {
   product: IProduct;
   openModal: (product: IProduct) => void;
-  handleAddToCart: (product: IProduct) => void;
+  handleAddToCart: (product: IProduct) => void;  // Add this line
 }
 
 const ProductCard = ({ product, openModal, handleAddToCart }: ProductCardProps) => (
@@ -36,7 +37,7 @@ const ProductCard = ({ product, openModal, handleAddToCart }: ProductCardProps) 
     <div class="flex justify-center items-center mt-4">
       <button
         class="btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        onClick={() => handleAddToCart(product)}
+        onClick={() => handleAddToCart(product)}  // Update this line
       >
         Add to Cart
       </button>
@@ -45,3 +46,4 @@ const ProductCard = ({ product, openModal, handleAddToCart }: ProductCardProps) 
 );
 
 export default ProductCard;
+

@@ -1,13 +1,11 @@
-// src/routes/api/cart/get.ts
-
 import type { APIEvent } from "@solidjs/start/server";
 import prisma from "../../../lib/prisma";
 import { json } from "@solidjs/router";
 
-export async function GET() {
+export async function GET(event: APIEvent) {
   try {
     const cartItems = await prisma.cartItem.findMany({
-      include: { product: true } // Ensure product information is included
+      include: { product: true }
     });
     return json({ status: "success", data: cartItems }, { status: 200 });
   } catch (error) {
