@@ -1,4 +1,4 @@
-import { createContext, useContext, createEffect, onMount } from "solid-js";
+import { createContext, useContext, createEffect, createSignal, onMount } from "solid-js";
 import { createStore } from "solid-js/store";
 import { JSX } from "solid-js/jsx-runtime";
 import { IProduct } from "../types/types";
@@ -7,23 +7,29 @@ type CartProviderProps = {
   children: JSX.Element;
 };
 
-type CartItem = IProduct & { quantity: number };
+type CartItem = {
+  id: number;
+  product_id: number;
+  product: IProduct;
+  quantity: number;
+  created_at: string;
+};
 
 type CartState = {
   items: CartItem[];
   total: number;
 };
 
-const CART_STORAGE_KEY = "cartItems";
-
 export const CartContext = createContext<{
   cartItems: CartState;
   addToCart: (product: IProduct, quantity?: number) => void;
-  removeFromCart: (productId: number, quantity?: number) => void;
+  updateCartItem: (id: number, quantity: number) => void;
+  removeFromCart: (id: number, quantity?: number) => void;
   clearCart: () => void;
 }>({
   cartItems: { items: [], total: 0 },
   addToCart: () => {},
+  updateCartItem: () => {},
   removeFromCart: () => {},
   clearCart: () => {},
 });
@@ -33,34 +39,24 @@ export function useCartContext() {
 }
 
 export function CartProvider(props: CartProviderProps) {
-  const loadCartFromAPI = async (): Promise<CartState> => {
+  const [cartItems, setCartItems] = createStore<CartState>({ items: [], total: 0 });
+
+  const loadCartFromAPI = async () => {
     try {
       const response = await fetch('/api/cart/get');
       const result = await response.json();
       if (result.status === "success") {
-        return { items: result.data, total: calculateTotal(result.data) };
-      } else {
-        return { items: [], total: 0 };
+        setCartItems({ items: result.data, total: calculateTotal(result.data) });
       }
     } catch (error) {
       console.error("Failed to load cart from API:", error);
-      return { items: [], total: 0 };
     }
   };
 
-  const [cartItems, setCartItems] = createStore<CartState>({ items: [], total: 0 });
-
-  onMount(async () => {
-    const initialCart = await loadCartFromAPI();
-    setCartItems(initialCart);
-  });
-
-  createEffect(() => {
-    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
-  });
+  onMount(loadCartFromAPI);
 
   const calculateTotal = (items: CartItem[]): number => {
-    return items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    return items.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
   };
 
   const updateStock = async (productId: number, newStock: number) => {
@@ -83,68 +79,135 @@ export function CartProvider(props: CartProviderProps) {
       return;
     }
 
-    setCartItems((prevCartItems) => {
-      const existingProductIndex = prevCartItems.items.findIndex((p) => p.id === product.id);
-      const newItems = [...prevCartItems.items];
+    const existingItem = cartItems.items.find((item) => item.product.id === product.id);
 
-      if (existingProductIndex !== -1) {
-        const existingProduct = newItems[existingProductIndex];
-        if (existingProduct.quantity + quantity > product.stock_quantity) {
-          alert(`Only ${product.stock_quantity} items in stock`);
-          return prevCartItems;
-        }
-        newItems[existingProductIndex].quantity += quantity;
-      } else {
-        newItems.push({ ...product, quantity });
+    if (existingItem) {
+      const newQuantity = existingItem.quantity + quantity;
+      if (newQuantity > product.stock_quantity) {
+        alert(`Only ${product.stock_quantity} items in stock`);
+        return;
       }
 
-      const newTotal = newItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-
-      updateStock(product.id, product.stock_quantity - quantity);
-
-      return {
-        items: newItems,
-        total: newTotal,
+      await updateCartItem(existingItem.id, newQuantity);
+    } else {
+      const newItem = {
+        id: product.id,
+        product_id: product.id,
+        product,
+        quantity,
+        created_at: new Date().toISOString(),
       };
-    });
-  };
 
-  const removeFromCart = async (productId: number, quantity = 1) => {
-    setCartItems((prevCartItems) => {
-      const existingProductIndex = prevCartItems.items.findIndex((p) => p.id === productId);
-      const newItems = [...prevCartItems.items];
+      try {
+        const response = await fetch('/api/cart/add', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            product_id: product.id,
+            quantity,
+          }),
+        });
 
-      if (existingProductIndex !== -1) {
-        const existingProduct = newItems[existingProductIndex];
-        newItems[existingProductIndex].quantity -= quantity;
-        if (newItems[existingProductIndex].quantity <= 0) {
-          newItems.splice(existingProductIndex, 1);
+        const result = await response.json();
+        if (result.status === "success") {
+          setCartItems((prevCartItems) => ({
+            items: [...prevCartItems.items, newItem],
+            total: prevCartItems.total + product.price * quantity,
+          }));
+          updateStock(product.id, product.stock_quantity - quantity);
         }
-
-        const newTotal = newItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-
-        updateStock(productId, existingProduct.stock_quantity + quantity);
-
-        return {
-          items: newItems,
-          total: newTotal,
-        };
+      } catch (error) {
+        console.error("Failed to add to cart in DB:", error);
       }
-
-      return prevCartItems;
-    });
+    }
   };
 
-  const clearCart = () => {
-    cartItems.items.forEach(item => {
-      updateStock(item.id, item.stock_quantity + item.quantity);
-    });
+  const updateCartItem = async (id: number, quantity: number) => {
+    try {
+      const response = await fetch('/api/cart/update', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id, quantity }),
+      });
 
-    setCartItems({ items: [], total: 0 });
+      const result = await response.json();
+      if (result.status === "success") {
+        setCartItems((prevCartItems) => {
+          const newItems = prevCartItems.items.map((item) =>
+            item.id === id ? { ...item, quantity } : item
+          );
+          return {
+            items: newItems,
+            total: calculateTotal(newItems),
+          };
+        });
+      }
+    } catch (error) {
+      console.error("Failed to update cart item:", error);
+    }
+  };
+
+  const removeFromCart = async (id: number, quantity = 1) => {
+    const existingItem = cartItems.items.find((item) => item.id === id);
+
+    if (existingItem) {
+      const newQuantity = existingItem.quantity - quantity;
+
+      if (newQuantity <= 0) {
+        try {
+          const response = await fetch('/api/cart/remove', {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id }),
+          });
+
+          const result = await response.json();
+          if (result.status === "success") {
+            setCartItems((prevCartItems) => {
+              const newItems = prevCartItems.items.filter((item) => item.id !== id);
+              return {
+                items: newItems,
+                total: calculateTotal(newItems),
+              };
+            });
+            updateStock(existingItem.product.id, existingItem.product.stock_quantity + existingItem.quantity);
+          }
+        } catch (error) {
+          console.error("Failed to remove cart item in DB:", error);
+        }
+      } else {
+        await updateCartItem(id, newQuantity);
+      }
+    }
+  };
+
+  const clearCart = async () => {
+    try {
+      const response = await fetch('/api/cart/clear', {
+        method: 'POST',
+      });
+
+      const result = await response.json();
+      if (result.status === "success") {
+        cartItems.items.forEach(item => {
+          updateStock(item.product.id, item.product.stock_quantity + item.quantity);
+        });
+
+        setCartItems({ items: [], total: 0 });
+      }
+    } catch (error) {
+      console.error("Failed to clear cart in DB:", error);
+    }
   };
 
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, clearCart }}>
+    <CartContext.Provider value={{ cartItems, addToCart, updateCartItem, removeFromCart, clearCart }}>
       {props.children}
     </CartContext.Provider>
   );

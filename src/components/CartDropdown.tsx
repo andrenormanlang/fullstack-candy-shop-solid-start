@@ -3,7 +3,7 @@ import { useCartContext } from "../context/CartContext";
 import { IoCartOutline } from "solid-icons/io";
 
 const CartDropdown = () => {
-  const { cartItems, addToCart, removeFromCart, clearCart } = useCartContext();
+  const { cartItems, addToCart, updateCartItem, removeFromCart, clearCart } = useCartContext();
   const [isOpen, setIsOpen] = createSignal(false);
   const [modalMessage, setModalMessage] = createSignal("");
   const [showModal, setShowModal] = createSignal(false);
@@ -12,10 +12,18 @@ const CartDropdown = () => {
 
   const handleAddToCart = (item) => {
     if (item.product.stock_quantity > item.quantity) {
-      addToCart(item.product, 1);
+      updateCartItem(item.id, item.quantity + 1); // Ensure item.id is being passed correctly
     } else {
       setModalMessage(`Total stock amount of ${item.product.name} has already been added to your cart.`);
       setShowModal(true);
+    }
+  };
+
+  const handleRemoveFromCart = (item) => {
+    if (item.quantity > 1) {
+      updateCartItem(item.id, item.quantity - 1); // Ensure item.id is being passed correctly
+    } else {
+      removeFromCart(item.id, item.quantity);
     }
   };
 
@@ -38,7 +46,7 @@ const CartDropdown = () => {
             {(item) => (
               <div class="cart-item grid-cols-3 p-2 mb-2 bg-white dark:bg-neutral-700 rounded-lg shadow">
                 <div class="flex items-center">
-                  <button class="ml-auto bg-red-500 p-1 rounded" onClick={() => removeFromCart(item.product.id, item.quantity)}>🗑️</button>
+                  <button class="ml-auto bg-red-500 p-1 rounded" onClick={() => removeFromCart(item.id, item.quantity)}>🗑️</button>
                   <img
                     src={`https://bortakvall.se/${item.product.images.thumbnail}`}
                     alt={item.product.name}
@@ -49,7 +57,7 @@ const CartDropdown = () => {
                       {item.product.name}
                     </div>
                     <div class="flex items-center mt-2">
-                      <button class="bg-gray-300 p-1 rounded" onClick={() => removeFromCart(item.product.id, 1)}>-</button>
+                      <button class="bg-gray-300 p-1 rounded" onClick={() => handleRemoveFromCart(item)}>-</button>
                       <div class="quantity-display mx-2 text-sm text-left text-black dark:text-white">
                         {item.quantity}
                       </div>

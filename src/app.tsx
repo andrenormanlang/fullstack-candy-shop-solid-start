@@ -74,7 +74,7 @@ export default function App() {
           </div>
 
           {/* Add the ProductList component here */}
-          <ProductList />
+          {/* <ProductList /> */}
 
         </div>
       </SearchProvider>
