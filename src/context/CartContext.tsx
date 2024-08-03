@@ -59,6 +59,10 @@ export function CartProvider(props: CartProviderProps) {
     return items.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
   };
 
+  const updateTotal = () => {
+    setCartItems('total', calculateTotal(cartItems.items));
+  };
+
   const updateStock = async (productId: number, newStock: number) => {
     try {
       await fetch(`/api/products/${productId}`, {
@@ -112,16 +116,21 @@ export function CartProvider(props: CartProviderProps) {
 
         const result = await response.json();
         if (result.status === "success") {
-          setCartItems((prevCartItems) => ({
-            items: [...prevCartItems.items, newItem],
-            total: prevCartItems.total + product.price * quantity,
-          }));
+          setCartItems((prevCartItems) => {
+            const updatedItems = [...prevCartItems.items, newItem];
+            return {
+              items: updatedItems,
+              total: calculateTotal(updatedItems),
+            };
+          });
           updateStock(product.id, product.stock_quantity - quantity);
         }
       } catch (error) {
         console.error("Failed to add to cart in DB:", error);
       }
     }
+
+    updateTotal();
   };
 
   const updateCartItem = async (id: number, quantity: number) => {
@@ -137,18 +146,20 @@ export function CartProvider(props: CartProviderProps) {
       const result = await response.json();
       if (result.status === "success") {
         setCartItems((prevCartItems) => {
-          const newItems = prevCartItems.items.map((item) =>
+          const updatedItems = prevCartItems.items.map((item) =>
             item.id === id ? { ...item, quantity } : item
           );
           return {
-            items: newItems,
-            total: calculateTotal(newItems),
+            items: updatedItems,
+            total: calculateTotal(updatedItems),
           };
         });
       }
     } catch (error) {
       console.error("Failed to update cart item:", error);
     }
+
+    updateTotal();
   };
 
   const removeFromCart = async (id: number, quantity = 1) => {
@@ -170,10 +181,10 @@ export function CartProvider(props: CartProviderProps) {
           const result = await response.json();
           if (result.status === "success") {
             setCartItems((prevCartItems) => {
-              const newItems = prevCartItems.items.filter((item) => item.id !== id);
+              const updatedItems = prevCartItems.items.filter((item) => item.id !== id);
               return {
-                items: newItems,
-                total: calculateTotal(newItems),
+                items: updatedItems,
+                total: calculateTotal(updatedItems),
               };
             });
             updateStock(existingItem.product.id, existingItem.product.stock_quantity + existingItem.quantity);
@@ -185,6 +196,8 @@ export function CartProvider(props: CartProviderProps) {
         await updateCartItem(id, newQuantity);
       }
     }
+
+    updateTotal();
   };
 
   const clearCart = async () => {
@@ -212,3 +225,4 @@ export function CartProvider(props: CartProviderProps) {
     </CartContext.Provider>
   );
 }
+
