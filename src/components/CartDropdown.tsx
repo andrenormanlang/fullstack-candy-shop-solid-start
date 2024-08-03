@@ -101,18 +101,18 @@ const CartDropdown = () => {
                     src={`https://bortakvall.se/${item.product.images.thumbnail}`}
                     alt={item.product.name}
                     class="cart-item-image mr-4"
-                    style={{ width: '60px', height: '60px' }}
+                    style={{ width: '80px', height: '80px' }}
                   />
                   <div class="flex flex-col items-start w-full">
                     <div class="font-bold text-name-cart text-left text-black dark:text-white">
                       {item.product.name}
                     </div>
                     <div class="flex items-center mt-2 justify-between w-full">
-                      <button class="bg-gray-300 p-1 rounded" onClick={() => handleRemoveFromCart(item)}>-</button>
+                      <button class="bg-gray-300 dark:bg-gray-600 p-1 rounded" onClick={() => handleRemoveFromCart(item)}>-</button>
                       <div class="quantity-display mx-2 text-sm text-left text-black dark:text-white">
                         {item.quantity}
                       </div>
-                      <button class="bg-gray-300 p-1 rounded" onClick={() => handleAddToCart(item)}>+</button>
+                      <button class="bg-gray-300 dark:bg-gray-600 p-1 rounded" onClick={() => handleAddToCart(item)}>+</button>
                       <div class="ml-4 font-bold text-left text-black dark:text-white">
                         <div class="text-sm">{(item.product.price * item.quantity).toFixed(2)}kr</div>
                       </div>
@@ -149,19 +149,18 @@ const CartDropdown = () => {
             <div class="flex flex-col gap-4 mb-4">
               <For each={cartItems.items}>
                 {(item) => (
-                  <div class="flex items-center justify-between bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+                  <div class="flex items-center justify-between bg-gray-100 dark:bg-gray-700 p-4 rounded-lg shadow border dark:border-gray-600">
                     <img
                       src={`https://bortakvall.se/${item.product.images.thumbnail}`}
                       alt={item.product.name}
-                      class="mr-4"
-                      style={{ width: '50px', height: '50px' }}
+                      class="mr-4 w-20 h-20 rounded"
                     />
-                    <div class="flex-1">
+                    <div class="flex-1 text-center">
                       <div class="font-bold text-black dark:text-white mb-2">{item.product.name}</div>
-                      <div class="flex items-center justify-between">
-                        <button class="bg-gray-300 p-1 rounded" onClick={() => updateCartItem(item.id, item.quantity - 1)}>-</button>
-                        <div class="mx-2">{item.quantity}</div>
-                        <button class="bg-gray-300 p-1 rounded" onClick={() => handleAddToCart(item)}>+</button>
+                      <div class="flex items-center justify-center gap-1">
+                        <button class="bg-gray-300 dark:bg-gray-600 p-2 rounded" onClick={() => updateCartItem(item.id, item.quantity - 1)}>-</button>
+                        <div class="quantity-display text-lg font-bold text-black dark:text-white mx-2">{item.quantity}</div>
+                        <button class="bg-gray-300 dark:bg-gray-600 p-2 rounded" onClick={() => handleAddToCart(item)}>+</button>
                       </div>
                     </div>
                     <div class="font-bold text-black dark:text-white ml-4">
@@ -195,7 +194,6 @@ const CartDropdown = () => {
 };
 
 export default CartDropdown;
-
 
 
 
