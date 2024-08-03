@@ -8,7 +8,8 @@ const CartDropdown = () => {
   const [modalMessage, setModalMessage] = createSignal("");
   const [showModal, setShowModal] = createSignal(false);
   const [modalAction, setModalAction] = createSignal(() => {});
-  const [itemToDelete, setItemToDelete] = createSignal(null);
+  const [showCheckoutModal, setShowCheckoutModal] = createSignal(false);
+  const [showLeaveSummaryModal, setShowLeaveSummaryModal] = createSignal(false);
 
   const toggleCart = () => setIsOpen(!isOpen());
 
@@ -18,6 +19,14 @@ const CartDropdown = () => {
     } else {
       setModalMessage(`Total stock amount of ${item.product.name} has already been added to your cart.`);
       setShowModal(true);
+    }
+  };
+
+  const handleRemoveFromCart = (item) => {
+    if (item.quantity > 1) {
+      updateCartItem(item.id, item.quantity - 1);
+    } else {
+      removeFromCart(item.id, item.quantity);
     }
   };
 
@@ -46,7 +55,29 @@ const CartDropdown = () => {
   const handleCloseModal = () => {
     setShowModal(false);
     setModalMessage("");
-    setItemToDelete(null);
+  };
+
+  const handleCheckout = () => {
+    setShowCheckoutModal(true);
+    setIsOpen(false);
+  };
+
+  const handleProceedToForm = () => {
+    setShowCheckoutModal(false);
+    // Redirect to form or perform form action
+  };
+
+  const handleOrderMore = () => {
+    setShowLeaveSummaryModal(true);
+  };
+
+  const confirmLeaveSummary = () => {
+    setShowCheckoutModal(false);
+    setShowLeaveSummaryModal(false);
+  };
+
+  const cancelLeaveSummary = () => {
+    setShowLeaveSummaryModal(false);
   };
 
   return (
@@ -77,7 +108,7 @@ const CartDropdown = () => {
                       {item.product.name}
                     </div>
                     <div class="flex items-center mt-2 justify-between w-full">
-                      <button class="bg-gray-300 p-1 rounded" onClick={() => updateCartItem(item.id, item.quantity - 1)}>-</button>
+                      <button class="bg-gray-300 p-1 rounded" onClick={() => handleRemoveFromCart(item)}>-</button>
                       <div class="quantity-display mx-2 text-sm text-left text-black dark:text-white">
                         {item.quantity}
                       </div>
@@ -94,7 +125,7 @@ const CartDropdown = () => {
           <div class="cart-total p-2 text-center text-black dark:text-white">
             Total: £{cartItems.total.toFixed(2)}
           </div>
-          <button class="checkout-button block p-2 w-auto mx-auto text-white bg-yellow-500 rounded-lg mb-2">
+          <button class="checkout-button block p-2 w-auto mx-auto text-white bg-yellow-500 rounded-lg mb-2" onClick={handleCheckout}>
             To checkout
           </button>
           <button class="bg-red-500 text-white p-2 rounded mt-2 w-full" onClick={promptClearCart}>Empty Cart</button>
@@ -111,10 +142,62 @@ const CartDropdown = () => {
           </div>
         </div>
       </Show>
+      <Show when={showCheckoutModal()}>
+        <div class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div class="modal-content bg-white p-8 rounded shadow-lg max-w-lg w-full">
+            <h2 class="text-2xl font-bold mb-4 text-center">Checkout Summary</h2>
+            <div class="flex flex-col gap-4 mb-4">
+              <For each={cartItems.items}>
+                {(item) => (
+                  <div class="flex items-center justify-between bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+                    <img
+                      src={`https://bortakvall.se/${item.product.images.thumbnail}`}
+                      alt={item.product.name}
+                      class="mr-4"
+                      style={{ width: '50px', height: '50px' }}
+                    />
+                    <div class="flex-1">
+                      <div class="font-bold text-black dark:text-white mb-2">{item.product.name}</div>
+                      <div class="flex items-center justify-between">
+                        <button class="bg-gray-300 p-1 rounded" onClick={() => updateCartItem(item.id, item.quantity - 1)}>-</button>
+                        <div class="mx-2">{item.quantity}</div>
+                        <button class="bg-gray-300 p-1 rounded" onClick={() => handleAddToCart(item)}>+</button>
+                      </div>
+                    </div>
+                    <div class="font-bold text-black dark:text-white ml-4">
+                      {(item.product.price * item.quantity).toFixed(2)} kr
+                    </div>
+                  </div>
+                )}
+              </For>
+            </div>
+            <div class="text-center text-xl font-bold mb-4">Total: {(cartItems.total).toFixed(2)} kr</div>
+            <div class="flex gap-4">
+              <button class="bg-blue-500 text-white p-2 rounded flex-1" onClick={handleProceedToForm}>Proceed to Form</button>
+              <button class="bg-gray-500 text-white p-2 rounded flex-1" onClick={handleOrderMore}>Order More</button>
+            </div>
+          </div>
+        </div>
+      </Show>
+      <Show when={showLeaveSummaryModal()}>
+        <div class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div class="modal-content bg-white p-4 rounded shadow-lg">
+            <p>Are you sure you want to leave the summary?</p>
+            <div class="flex justify-center mt-4">
+              <button class="bg-blue-500 text-white p-2 rounded mr-2" onClick={confirmLeaveSummary}>Yes</button>
+              <button class="bg-gray-500 text-white p-2 rounded ml-2" onClick={cancelLeaveSummary}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      </Show>
     </div>
   );
 };
 
 export default CartDropdown;
+
+
+
+
 
 
