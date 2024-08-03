@@ -26,7 +26,7 @@ const CartDropdown = () => {
     if (item.quantity > 1) {
       updateCartItem(item.id, item.quantity - 1);
     } else {
-      removeFromCart(item.id, item.quantity);
+      promptRemoveFromCart(item);
     }
   };
 
@@ -101,18 +101,18 @@ const CartDropdown = () => {
                     src={`https://bortakvall.se/${item.product.images.thumbnail}`}
                     alt={item.product.name}
                     class="cart-item-image mr-4"
-                    style={{ width: '80px', height: '80px' }}
+                    style={{ width: '60px', height: '60px' }}
                   />
                   <div class="flex flex-col items-start w-full">
                     <div class="font-bold text-name-cart text-left text-black dark:text-white">
                       {item.product.name}
                     </div>
                     <div class="flex items-center mt-2 justify-between w-full">
-                      <button class="bg-gray-300 dark:bg-gray-600 p-1 rounded" onClick={() => handleRemoveFromCart(item)}>-</button>
+                      <button class="bg-gray-300 p-1 rounded" onClick={() => handleRemoveFromCart(item)}>-</button>
                       <div class="quantity-display mx-2 text-sm text-left text-black dark:text-white">
                         {item.quantity}
                       </div>
-                      <button class="bg-gray-300 dark:bg-gray-600 p-1 rounded" onClick={() => handleAddToCart(item)}>+</button>
+                      <button class="bg-gray-300 p-1 rounded" onClick={() => handleAddToCart(item)}>+</button>
                       <div class="ml-4 font-bold text-left text-black dark:text-white">
                         <div class="text-sm">{(item.product.price * item.quantity).toFixed(2)}kr</div>
                       </div>
@@ -132,7 +132,7 @@ const CartDropdown = () => {
         </div>
       </Show>
       <Show when={showModal()}>
-        <div class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div class="modal-content bg-white p-4 rounded shadow-lg">
             <p>{modalMessage()}</p>
             <div class="flex justify-center mt-4">
@@ -143,7 +143,7 @@ const CartDropdown = () => {
         </div>
       </Show>
       <Show when={showCheckoutModal()}>
-        <div class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-40">
           <div class="modal-content bg-white p-8 rounded shadow-lg max-w-lg w-full">
             <h2 class="text-2xl font-bold mb-4 text-center">Checkout Summary</h2>
             <div class="flex flex-col gap-4 mb-4">
@@ -153,14 +153,14 @@ const CartDropdown = () => {
                     <img
                       src={`https://bortakvall.se/${item.product.images.thumbnail}`}
                       alt={item.product.name}
-                      class="mr-4 w-20 h-20 rounded"
+                      class="mr-4 w-16 h-16 rounded"
                     />
-                    <div class="flex-1 text-center">
-                      <div class="font-bold text-black dark:text-white mb-2">{item.product.name}</div>
-                      <div class="flex items-center justify-center gap-1">
-                        <button class="bg-gray-300 dark:bg-gray-600 p-2 rounded" onClick={() => updateCartItem(item.id, item.quantity - 1)}>-</button>
-                        <div class="quantity-display text-lg font-bold text-black dark:text-white mx-2">{item.quantity}</div>
-                        <button class="bg-gray-300 dark:bg-gray-600 p-2 rounded" onClick={() => handleAddToCart(item)}>+</button>
+                    <div class="flex-1">
+                      <div class="font-bold text-center text-black dark:text-white mb-2">{item.product.name}</div>
+                      <div class="flex items-center justify-center">
+                        <button class="bg-gray-300 dark:bg-gray-600 p-1 rounded" onClick={() => handleRemoveFromCart(item)}>-</button>
+                        <div class="mx-2 text-black dark:text-white">{item.quantity}</div>
+                        <button class="bg-gray-300 dark:bg-gray-600 p-1 rounded" onClick={() => handleAddToCart(item)}>+</button>
                       </div>
                     </div>
                     <div class="font-bold text-black dark:text-white ml-4">
@@ -179,7 +179,7 @@ const CartDropdown = () => {
         </div>
       </Show>
       <Show when={showLeaveSummaryModal()}>
-        <div class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div class="modal-content bg-white p-4 rounded shadow-lg">
             <p>Are you sure you want to leave the summary?</p>
             <div class="flex justify-center mt-4">
@@ -194,6 +194,7 @@ const CartDropdown = () => {
 };
 
 export default CartDropdown;
+
 
 
 
