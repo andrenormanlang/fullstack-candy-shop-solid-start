@@ -1,11 +1,10 @@
-// ProductList.tsx
-import { createSignal, onMount, For, Show } from "solid-js";
+import { createSignal, onMount, For, Show, createEffect } from "solid-js";
 import { IProduct } from "../types/types";
 import ProductCard from "./ProductCard";
-import Spinner from "./Spinner"; // Adjust the path if necessary
+import Spinner from "./Spinner";
 import { useCartContext } from "../context/CartContext";
 import { useSearch } from "../context/SearchContext";
-import { AiFillCloseCircle } from "solid-icons/ai";
+import { useWebSocket } from "../hooks/useWebSocket";
 
 const ProductList = () => {
   const [products, setProducts] = createSignal<IProduct[]>([]);
@@ -13,6 +12,7 @@ const ProductList = () => {
   const [selectedProduct, setSelectedProduct] = createSignal<IProduct | undefined>();
   const { addToCart, updateCartItem, removeFromCart } = useCartContext();
   const { searchQuery } = useSearch();
+  const [ws, message] = useWebSocket("ws://localhost:8080");
 
   const fetchProducts = async () => {
     const response = await fetch("/api/products");
@@ -33,12 +33,35 @@ const ProductList = () => {
     getProducts();
   });
 
+  createEffect(() => {
+    if (message()) {
+      const updatedProduct = message();
+      setProducts((prevProducts) =>
+        prevProducts.map((product) =>
+          product.id === updatedProduct.id ? { ...product, ...updatedProduct } : product
+        )
+      );
+      if (selectedProduct() && selectedProduct()!.id === updatedProduct.id) {
+        setSelectedProduct((prevProduct) => ({ ...prevProduct, ...updatedProduct }));
+      }
+    }
+  });
+
   const handleAddToCart = async (product: IProduct) => {
     if (product.stock_quantity > 0) {
       await addToCart(product);
       await updateStock(product.id, product.stock_quantity - 1);
-      product.stock_quantity -= 1;
-      setProducts([...products()]);
+      setProducts((prevProducts) =>
+        prevProducts.map((p) =>
+          p.id === product.id ? { ...p, stock_quantity: product.stock_quantity - 1 } : p
+        )
+      );
+      if (selectedProduct() && selectedProduct()!.id === product.id) {
+        setSelectedProduct((prevProduct) => ({
+          ...prevProduct!,
+          stock_quantity: prevProduct!.stock_quantity - 1
+        }));
+      }
     } else {
       alert('Out of stock');
     }
@@ -46,24 +69,20 @@ const ProductList = () => {
 
   const handleUpdateCartItem = async (id: number, quantity: number) => {
     await updateCartItem(id, quantity);
-    const updatedProducts = products().map((product) => {
-      if (product.id === id) {
-        product.stock_quantity -= quantity;
-      }
-      return product;
-    });
-    setProducts(updatedProducts);
+    setProducts((prevProducts) =>
+      prevProducts.map((product) =>
+        product.id === id ? { ...product, stock_quantity: product.stock_quantity - quantity } : product
+      )
+    );
   };
 
   const handleRemoveFromCart = async (id: number, quantity: number) => {
     await removeFromCart(id, quantity);
-    const updatedProducts = products().map((product) => {
-      if (product.id === id) {
-        product.stock_quantity += quantity;
-      }
-      return product;
-    });
-    setProducts(updatedProducts);
+    setProducts((prevProducts) =>
+      prevProducts.map((product) =>
+        product.id === id ? { ...product, stock_quantity: product.stock_quantity + quantity } : product
+      )
+    );
   };
 
   const updateStock = async (productId: number, newStock: number) => {
@@ -75,6 +94,9 @@ const ProductList = () => {
         },
         body: JSON.stringify({ stock_quantity: newStock })
       });
+      if (ws()) {
+        ws()!.send(JSON.stringify({ id: productId, stock_quantity: newStock }));
+      }
     } catch (error) {
       console.error("Failed to update stock:", error);
     }
@@ -94,10 +116,11 @@ const ProductList = () => {
     const query = searchQuery().toLowerCase();
     const allProducts = products();
     if (!allProducts) return [];
-    return allProducts.filter((product) =>
-      product.name.toLowerCase().includes(query) ||
-      product.description.toLowerCase().includes(query)
-    );
+    return allProducts.filter((product) => {
+      const name = product.name ? product.name.toLowerCase() : '';
+      const description = product.description ? product.description.toLowerCase() : '';
+      return name.includes(query) || description.includes(query);
+    });
   };
 
   return (
@@ -117,7 +140,7 @@ const ProductList = () => {
               <ProductCard
                 product={product}
                 openModal={openModal}
-                handleAddToCart={handleAddToCart}  // Pass this function as a prop
+                handleAddToCart={handleAddToCart}
               />
             )}
           </For>
@@ -129,22 +152,19 @@ const ProductList = () => {
             <Show when={selectedProduct()}>
               {(product) => (
                 <>
-                  <button
-                    onClick={closeModal}
-                    class="close-btn absolute top-4 right-4 p-2"
-                  >
-                    <AiFillCloseCircle
-                      size={32}
-                      class="text-gray-800 dark:text-gray-200 hover:text-red-500 transition duration-300 ease-in-out"
-                    />
-                  </button>
-                  <div class="flex flex-col items-center">
-                    <img
-                      src={`https://bortakvall.se/${product().images?.thumbnail}`}
-                      alt="product image"
-                      class="w-full max-w-xs mb-4 rounded-lg"
-                      style={{ 'max-width': "150px" }}
-                    />
+                  <div class="flex flex-col items-center relative">
+                    <div class="relative w-full max-w-xs mb-4">
+                      <img
+                        src={`https://bortakvall.se/${product().images?.thumbnail}`}
+                        alt="product image"
+                        class="w-full rounded-lg"
+                      />
+                      {product().stock_quantity === 0 && (
+                        <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center pointer-events-none">
+                          <span class="text-white text-2xl font-bold">Sold Out</span>
+                        </div>
+                      )}
+                    </div>
                     <h3 class="product-name text-2xl font-bold mb-4 text-gray-900 dark:text-white">
                       {product().name}
                     </h3>
@@ -153,12 +173,21 @@ const ProductList = () => {
                       <p class="text-xl font-medium text-gray-900 dark:text-white">Stock: {product().stock_quantity}</p>
                       <p class="text-xl font-medium text-blue-600">Price: Only £{product().price}</p>
                     </div>
-                    <button
-                      class="btn bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-6 rounded-lg transition duration-300"
-                      onClick={() => handleAddToCart(product())}
-                    >
-                      Add to Cart
-                    </button>
+                    <div class="flex flex-col sm:flex-row justify-center items-center mt-4 space-y-2 sm:space-y-0 sm:space-x-2 w-full">
+                      <button
+                        class="btn w-full sm:w-auto bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-6 rounded-lg transition duration-300"
+                        onClick={() => handleAddToCart(product())}
+                        disabled={product().stock_quantity === 0}
+                      >
+                        {product().stock_quantity === 0 ? "Sold Out" : "Add to Cart"}
+                      </button>
+                      <button
+                        class="btn w-full sm:w-auto bg-blue-500 hover:bg-blue-500 text-white font-bold py-2 px-6 rounded-lg transition duration-300"
+                        onClick={closeModal}
+                      >
+                        Back to Product List
+                      </button>
+                    </div>
                   </div>
                 </>
               )}
@@ -171,5 +200,4 @@ const ProductList = () => {
 };
 
 export default ProductList;
-
 

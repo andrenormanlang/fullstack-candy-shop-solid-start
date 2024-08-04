@@ -19,10 +19,12 @@
     "solid-js": "^1.8.19",
     "solid-spinner": "^0.2.0",
     "vinxi": "^0.4.1",
-    "vite": "^5.3.5"
+    "vite": "^5.3.5",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
+    "@types/ws": "^8.5.12",
     "autoprefixer": "^10.4.19",
     "postcss": "^8.4.40",
     "solid-devtools": "^0.29.2",
