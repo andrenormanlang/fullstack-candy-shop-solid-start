@@ -4,7 +4,6 @@ import ProductCard from "./ProductCard";
 import Spinner from "./Spinner";
 import { useCartContext } from "../context/CartContext";
 import { useSearch } from "../context/SearchContext";
-import { useWebSocket } from "../hooks/useWebSocket";
 
 const ProductList = () => {
   const [products, setProducts] = createSignal<IProduct[]>([]);
@@ -12,7 +11,6 @@ const ProductList = () => {
   const [selectedProduct, setSelectedProduct] = createSignal<IProduct | undefined>();
   const { addToCart, updateCartItem, removeFromCart } = useCartContext();
   const { searchQuery } = useSearch();
-  const [ws, message] = useWebSocket("ws://localhost:8080");
 
   const fetchProducts = async () => {
     const response = await fetch("/api/products");
@@ -33,19 +31,6 @@ const ProductList = () => {
     getProducts();
   });
 
-  createEffect(() => {
-    if (message()) {
-      const updatedProduct = message();
-      setProducts((prevProducts) =>
-        prevProducts.map((product) =>
-          product.id === updatedProduct.id ? { ...product, ...updatedProduct } : product
-        )
-      );
-      if (selectedProduct() && selectedProduct()!.id === updatedProduct.id) {
-        setSelectedProduct((prevProduct) => ({ ...prevProduct, ...updatedProduct }));
-      }
-    }
-  });
 
   const handleAddToCart = async (product: IProduct) => {
     if (product.stock_quantity > 0) {
@@ -66,6 +51,7 @@ const ProductList = () => {
       alert('Out of stock');
     }
   };
+
 
   const handleUpdateCartItem = async (id: number, quantity: number) => {
     await updateCartItem(id, quantity);
@@ -89,14 +75,9 @@ const ProductList = () => {
     try {
       await fetch(`/api/products/${productId}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ stock_quantity: newStock })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ stock_quantity: newStock }),
       });
-      if (ws()) {
-        ws()!.send(JSON.stringify({ id: productId, stock_quantity: newStock }));
-      }
     } catch (error) {
       console.error("Failed to update stock:", error);
     }

@@ -11,10 +11,7 @@ export async function POST(event: APIEvent) {
       return json({ status: "fail", message: "Product ID and quantity are required." }, { status: 400 });
     }
 
-    // Check if the product exists
-    const product = await prisma.product.findUnique({
-      where: { id: product_id },
-    });
+    const product = await prisma.product.findUnique({ where: { id: product_id } });
 
     if (!product) {
       return json({ status: "fail", message: "Product not found." }, { status: 404 });
@@ -24,9 +21,7 @@ export async function POST(event: APIEvent) {
       return json({ status: "fail", message: "Insufficient stock." }, { status: 400 });
     }
 
-    const existingItem = await prisma.cartItem.findFirst({
-      where: { product_id },
-    });
+    const existingItem = await prisma.cartItem.findFirst({ where: { product_id } });
 
     if (existingItem) {
       await prisma.cartItem.update({
@@ -34,12 +29,7 @@ export async function POST(event: APIEvent) {
         data: { quantity: existingItem.quantity + quantity },
       });
     } else {
-      await prisma.cartItem.create({
-        data: {
-          product_id,
-          quantity,
-        },
-      });
+      await prisma.cartItem.create({ data: { product_id, quantity } });
     }
 
     await prisma.product.update({
@@ -53,3 +43,4 @@ export async function POST(event: APIEvent) {
     return json({ status: "error", message: "Something went wrong" }, { status: 500 });
   }
 }
+
