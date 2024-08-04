@@ -43,4 +43,3 @@ export async function POST(event: APIEvent) {
     return json({ status: "error", message: "Something went wrong" }, { status: 500 });
   }
 }
-

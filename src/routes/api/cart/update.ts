@@ -1,12 +1,26 @@
+// src/routes/api/cart/update.ts
 import type { APIEvent } from "@solidjs/start/server";
 import prisma from "../../../lib/prisma";
 import { json } from "@solidjs/router";
 
 export async function PUT(event: APIEvent) {
-  const data = await event.request.json();
-  const { id, quantity } = data;
+  let id: number | undefined; // Declare the id variable outside the try block
 
   try {
+    const data = await event.request.json();
+    id = data.id;
+    const { quantity } = data;
+
+    if (!id || typeof id !== 'number' || isNaN(id)) {
+      return json({ status: "fail", message: "Invalid or missing ID." }, { status: 400 });
+    }
+
+    if (!quantity || typeof quantity !== 'number' || isNaN(quantity)) {
+      return json({ status: "fail", message: "Invalid or missing quantity." }, { status: 400 });
+    }
+
+    console.log(`Received data for update: id=${id}, quantity=${quantity}`); // Debugging log
+
     const cartItem = await prisma.cartItem.findUnique({
       where: { id },
     });

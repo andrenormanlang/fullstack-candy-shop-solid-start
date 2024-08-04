@@ -15,12 +15,14 @@ const CartDropdown = () => {
 
   const handleAddToCart = (item) => {
     if (item.product.stock_quantity > item.quantity) {
+      console.log(`Adding one more of item id: ${item.id}, current quantity: ${item.quantity}`); // Debugging log
       updateCartItem(item.id, item.quantity + 1);
     } else {
       setModalMessage(`Total stock amount of ${item.product.name} has already been added to your cart.`);
       setShowModal(true);
     }
   };
+
 
   const handleRemoveFromCart = (item) => {
     if (item.quantity > 1) {

@@ -84,6 +84,7 @@ export function CartProvider(props: CartProviderProps) {
 
   const updateCartItem = async (id: number, quantity: number) => {
     try {
+      console.log(`Updating cart item with id: ${id}, quantity: ${quantity}`); // Debugging log
       const response = await fetch('/api/cart/update', {
         method: 'PUT',
         headers: {
@@ -94,11 +95,14 @@ export function CartProvider(props: CartProviderProps) {
       const result = await response.json();
       if (result.status === "success") {
         await loadCartFromAPI();
+      } else {
+        console.error('Failed to update cart item:', result.message);
       }
     } catch (error) {
       console.error("Failed to update cart item:", error);
     }
   };
+
 
   const removeFromCart = async (id: number, quantity = 1) => {
     try {
