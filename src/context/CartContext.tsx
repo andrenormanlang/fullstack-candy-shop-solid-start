@@ -17,7 +17,6 @@ type CartItem = {
   total_stock_quantity: number; // Add this field
 };
 
-
 type CartState = {
   items: CartItem[];
   total: number;
@@ -71,16 +70,16 @@ export function CartProvider(props: CartProviderProps) {
     try {
       const existingItem = cartItems.items.find(item => item.product_id === product.id);
 
-      if (existingItem) {
-        const newQuantity = existingItem.quantity + quantity;
-        if (newQuantity > product.stock_quantity) {
-          alert(`Cannot add more than ${product.stock_quantity} items to the cart`);
-          return;
-        }
-      } else if (quantity > product.stock_quantity) {
-        alert(`Cannot add more than ${product.stock_quantity} items to the cart`);
-        return;
-      }
+      // if (existingItem) {
+      //   const newQuantity = existingItem.quantity + quantity;
+      //   if (newQuantity > product.stock_quantity) {
+      //     alert(`Cannot add more than ${product.stock_quantity} items to the cart`);
+      //     return;
+      //   }
+      // } else if (quantity > product.stock_quantity) {
+      //   alert(`Cannot add more than ${product.stock_quantity} items to the cart`);
+      //   return;
+      // }
 
       const response = await fetch('/api/cart/add', {
         method: 'POST',
@@ -166,4 +165,3 @@ export function CartProvider(props: CartProviderProps) {
     </CartContext.Provider>
   );
 }
-

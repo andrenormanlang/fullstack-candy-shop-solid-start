@@ -106,7 +106,7 @@ const ProductList = () => {
     <div class="flex flex-col items-center min-h-screen">
       <Show when={searchQuery().length > 0}>
         <p class="text-center text-black dark:text-gray-600">
-          You have {filteredProducts().length} candies with the word "<span class="font-bold text-black dark:text-black">{searchQuery()}</span>"
+          You have {filteredProducts().length} candies with the word "<span class="font-bold bg-yellow-300 text-black dark:bg-yellow-500 dark:text-black">{searchQuery()}</span>"
         </p>
       </Show>
       <Show

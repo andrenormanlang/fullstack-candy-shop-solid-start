@@ -182,7 +182,7 @@ const CartDropdown = () => {
             <div class="text-center text-xl font-bold mb-4 text-black dark:text-white">Total: {cartItems.total.toFixed(2)} kr</div>
             <div class="flex gap-4">
               <button class="bg-blue-500 text-white p-2 rounded flex-1" onClick={handleProceedToForm}>Proceed to Form</button>
-              <button class="bg-gray-500 text-white p-2 rounded flex-1" onClick={handleOrderMore}>Order More</button>
+              <button class="bg-gray-500 text-white p-2 rounded flex-1" onClick={handleOrderMore}>Order other types of Candy</button>
             </div>
           </div>
         </div>
