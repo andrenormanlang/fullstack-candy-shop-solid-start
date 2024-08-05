@@ -4,9 +4,28 @@ import prisma from "../../../lib/prisma";
 import { json } from "@solidjs/router";
 
 export async function POST(event: APIEvent) {
+  const prisma = new PrismaClient();
+  const transaction = await prisma.$transaction();
+
   try {
     const data = await event.request.json();
 
+    // Check if there is sufficient stock for each item
+    for (const item of data.order_items) {
+      const product = await prisma.product.findUnique({
+        where: { id: item.product_id },
+      });
+
+      if (!product) {
+        return json({ status: "fail", message: `Product with ID ${item.product_id} not found.` }, { status: 404 });
+      }
+
+      if (product.stock_quantity < item.qty) {
+        return json({ status: "fail", message: `Insufficient stock for product with ID ${item.product_id}.` }, { status: 400 });
+      }
+    }
+
+    // Create the order
     const order = await prisma.order.create({
       data: {
         order_date: new Date(data.order_date),
@@ -24,6 +43,7 @@ export async function POST(event: APIEvent) {
         items: {
           create: data.order_items.map(item => ({
             product_id: item.product_id,
+            product_name: item.product_name,
             qty: item.qty,
             item_price: item.item_price,
             item_total: item.item_total,
@@ -33,9 +53,25 @@ export async function POST(event: APIEvent) {
       include: { items: true },
     });
 
+    // Update the stock quantity after the order is created
+    for (const item of data.order_items) {
+      await prisma.product.update({
+        where: { id: item.product_id },
+        data: { stock_quantity: { decrement: item.qty } },
+      });
+    }
+
+    // Clear the cart after the order is placed
+    await prisma.cartItem.deleteMany({});
+
+    await transaction.commit();
+
     return json({ status: "success", data: order }, { status: 201 });
   } catch (error) {
+    await transaction.rollback();
     console.error("Error creating order", error);
     return json({ status: "error", message: "Something went wrong" }, { status: 500 });
+  } finally {
+    await prisma.$disconnect();
   }
 }

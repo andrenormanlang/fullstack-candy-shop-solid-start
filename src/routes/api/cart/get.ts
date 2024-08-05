@@ -17,4 +17,3 @@ export async function GET(event: APIEvent) {
     return json({ status: "error", message: "Something went wrong" }, { status: 500 });
   }
 }
-

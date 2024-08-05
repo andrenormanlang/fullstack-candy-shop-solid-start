@@ -103,6 +103,7 @@ const CartDropdown = () => {
     }
   };
 
+
   return (
     <div class="cart-dropdown-container relative inline-block">
       <button onClick={toggleCart} class="cart-icon-wrapper">

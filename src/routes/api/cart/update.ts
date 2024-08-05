@@ -1,4 +1,3 @@
-// src/routes/api/cart/update.ts
 import type { APIEvent } from "@solidjs/start/server";
 import prisma from "../../../lib/prisma";
 import { json } from "@solidjs/router";
@@ -57,5 +56,3 @@ export async function PUT(event: APIEvent) {
     return json({ status: "error", message: "Something went wrong" }, { status: 500 });
   }
 }
-
-
