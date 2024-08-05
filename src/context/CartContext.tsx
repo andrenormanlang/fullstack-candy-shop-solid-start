@@ -14,7 +14,9 @@ type CartItem = {
   product: IProduct;
   quantity: number;
   created_at: string;
+  total_stock_quantity: number; // Add this field
 };
+
 
 type CartState = {
   items: CartItem[];
@@ -47,6 +49,7 @@ export function CartProvider(props: CartProviderProps) {
       const response = await fetch('/api/cart/get');
       const result = await response.json();
       if (result.status === "success") {
+        // Assuming the API returns total_stock_quantity for each cart item
         setCartItems({ items: result.data, total: calculateTotal(result.data) });
       }
     } catch (error) {
@@ -82,15 +85,24 @@ export function CartProvider(props: CartProviderProps) {
     }
   };
 
-  const updateCartItem = async (id: number, quantity: number) => {
+  const updateCartItem = async (id: number, newQuantity: number) => {
     try {
-      console.log(`Updating cart item with id: ${id}, quantity: ${quantity}`); // Debugging log
+      const cartItem = cartItems.items.find(item => item.id === id);
+      if (!cartItem) return;
+
+      const quantityDifference = newQuantity - cartItem.quantity;
+
+      if (cartItem.product.stock_quantity < quantityDifference) {
+        alert("Insufficient stock.");
+        return;
+      }
+
       const response = await fetch('/api/cart/update', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ id, quantity }),
+        body: JSON.stringify({ id, quantity: newQuantity }),
       });
       const result = await response.json();
       if (result.status === "success") {
@@ -102,7 +114,6 @@ export function CartProvider(props: CartProviderProps) {
       console.error("Failed to update cart item:", error);
     }
   };
-
 
   const removeFromCart = async (id: number, quantity = 1) => {
     try {
@@ -142,3 +153,4 @@ export function CartProvider(props: CartProviderProps) {
     </CartContext.Provider>
   );
 }
+

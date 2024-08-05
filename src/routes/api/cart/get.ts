@@ -7,9 +7,14 @@ export async function GET(event: APIEvent) {
     const cartItems = await prisma.cartItem.findMany({
       include: { product: true }
     });
-    return json({ status: "success", data: cartItems }, { status: 200 });
+    const cartItemsWithStock = cartItems.map(item => ({
+      ...item,
+      total_stock_quantity: item.product.stock_quantity,
+    }));
+    return json({ status: "success", data: cartItemsWithStock }, { status: 200 });
   } catch (error) {
     console.error("Error fetching cart items", error);
     return json({ status: "error", message: "Something went wrong" }, { status: 500 });
   }
 }
+

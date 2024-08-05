@@ -19,8 +19,6 @@ export async function PUT(event: APIEvent) {
       return json({ status: "fail", message: "Invalid or missing quantity." }, { status: 400 });
     }
 
-    console.log(`Received data for update: id=${id}, quantity=${quantity}`); // Debugging log
-
     const cartItem = await prisma.cartItem.findUnique({
       where: { id },
     });
@@ -50,7 +48,7 @@ export async function PUT(event: APIEvent) {
 
     await prisma.product.update({
       where: { id: product.id },
-      data: { stock_quantity: { decrement: quantityDifference } },
+      data: { stock_quantity: product.stock_quantity - quantityDifference },
     });
 
     return json({ status: "success" }, { status: 200 });
@@ -59,3 +57,4 @@ export async function PUT(event: APIEvent) {
     return json({ status: "error", message: "Something went wrong" }, { status: 500 });
   }
 }
+
