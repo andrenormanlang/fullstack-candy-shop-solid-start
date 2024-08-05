@@ -137,7 +137,7 @@ const ProductList = () => {
                       <img
                         src={`https://bortakvall.se/${product().images?.thumbnail}`}
                         alt="product image"
-                        class="w-full rounded-lg"
+                        class="w-full h-60 object-contain rounded-lg"
                       />
                       {product().stock_quantity === 0 && (
                         <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center pointer-events-none">
