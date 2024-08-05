@@ -62,9 +62,6 @@ export function CartProvider(props: CartProviderProps) {
     return items.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
   };
 
-  const updateTotal = () => {
-    setCartItems('total', calculateTotal(cartItems.items));
-  };
 
   const addToCart = async (product: IProduct, quantity = 1) => {
     try {

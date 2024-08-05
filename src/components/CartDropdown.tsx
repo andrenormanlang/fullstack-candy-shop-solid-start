@@ -3,7 +3,7 @@ import { useCartContext } from "../context/CartContext";
 import { IoCartOutline, IoTrash } from "solid-icons/io";
 
 const CartDropdown = () => {
-  const { cartItems, addToCart, updateCartItem, removeFromCart, clearCart } = useCartContext();
+  const { cartItems, updateCartItem, removeFromCart, clearCart } = useCartContext();
   const [isOpen, setIsOpen] = createSignal(false);
   const [modalMessage, setModalMessage] = createSignal("");
   const [showModal, setShowModal] = createSignal(false);
@@ -20,10 +20,6 @@ const CartDropdown = () => {
     } else {
       alert(`Cannot add more than ${item.product.stock_quantity} items to the cart`);
     }
-  };
-
-  const handleRemoveFromCart = (item) => {
-    promptRemoveFromCart(item);
   };
 
   const promptRemoveFromCart = (item) => {
