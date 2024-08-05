@@ -1,33 +1,34 @@
-import { v4 as uuidv4 } from 'uuid';
+import { PrismaClient } from "@prisma/client";
+import { v4 as uuidv4 } from "uuid";
 import type { APIEvent } from "@solidjs/start/server";
-import { PrismaClient } from "@prisma/client"; 
 import { json } from "@solidjs/router";
 
 const prisma = new PrismaClient();
 
 export async function POST(event: APIEvent) {
+  const data = await event.request.json();
+
   try {
-    const data = await event.request.json();
+    const result = await prisma.$transaction(async (prisma) => {
+      // Check if there is sufficient stock for each item
+      for (const item of data.order_items) {
+        const product = await prisma.product.findUnique({
+          where: { id: item.product_id },
+        });
 
-    // Check if there is sufficient stock for each item
-    for (const item of data.order_items) {
-      const product = await prisma.product.findUnique({
-        where: { id: item.product_id },
-      });
+        if (!product) {
+          throw new Error(`Product with ID ${item.product_id} not found.`);
+        }
 
-      if (!product) {
-        return json({ status: "fail", message: `Product with ID ${item.product_id} not found.` }, { status: 404 });
+        if (product.stock_quantity < item.qty) {
+          throw new Error(
+            `Insufficient stock for product with ID ${item.product_id}.`
+          );
+        }
       }
 
-      if (product.stock_quantity < item.qty) {
-        return json({ status: "fail", message: `Insufficient stock for product with ID ${item.product_id}.` }, { status: 400 });
-      }
-    }
-
-    // Use a transaction to ensure atomicity
-    const order = await prisma.$transaction(async (prisma) => {
       // Create the order
-      const newOrder = await prisma.order.create({
+      const order = await prisma.order.create({
         data: {
           order_date: new Date(data.order_date),
           customer_first_name: data.customer_first_name,
@@ -42,7 +43,7 @@ export async function POST(event: APIEvent) {
           created_at: new Date(data.created_at),
           updated_at: new Date(data.updated_at),
           items: {
-            create: data.order_items.map(item => ({
+            create: data.order_items.map((item) => ({
               product_id: item.product_id,
               product_name: item.product_name,
               qty: item.qty,
@@ -62,16 +63,13 @@ export async function POST(event: APIEvent) {
         });
       }
 
-      // Clear the cart after the order is placed
-      await prisma.cartItem.deleteMany({});
-
-      return newOrder;
+      return order;
     });
 
-    return json({ status: "success", data: order }, { status: 201 });
+    return json({ status: "success", data: result }, { status: 201 });
   } catch (error) {
     console.error("Error creating order", error);
-    return json({ status: "error", message: "Something went wrong" }, { status: 500 });
+    return json({ status: "error", message: error.message }, { status: 500 });
   } finally {
     await prisma.$disconnect();
   }

@@ -1,4 +1,4 @@
-import { createSignal, For, Show } from "solid-js";
+import { createSignal, createEffect, For, Show } from "solid-js";
 import { useCartContext } from "../context/CartContext";
 import { IoCartOutline, IoTrash } from "solid-icons/io";
 import { IOrder, IOrderRequest, IOrderResponse } from "../types/types";
@@ -15,6 +15,7 @@ const CartDropdown = () => {
   const [showOrderForm, setShowOrderForm] = createSignal(false);
   const [showOrderConfirmation, setShowOrderConfirmation] = createSignal(false);
   const [orderData, setOrderData] = createSignal<IOrder | null>(null);
+  const [products, setProducts] = createSignal([]);
 
   const toggleCart = () => setIsOpen(!isOpen());
 
@@ -76,10 +77,33 @@ const CartDropdown = () => {
   };
 
   const handleOrderMore = () => {
-    setShowLeaveSummaryModal(true);
+    setShowLeaveSummaryModal(false);
+  };
+
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch("/api/products");
+      const result = await response.json();
+      if (result.status === "success") {
+        setProducts(result.data);
+      }
+    } catch (error) {
+      console.error("Error fetching products", error);
+    }
   };
 
   const handleOrderSubmit = async (formData: IOrderRequest) => {
+    // Optimistically update the stock
+    cartItems.items.forEach((item) => {
+      setProducts((products) =>
+        products.map((product) =>
+          product.id === item.product_id
+            ? { ...product, stock_quantity: product.stock_quantity - item.quantity }
+            : product
+        )
+      );
+    });
+
     try {
       const response = await fetch("/api/orders/create", {
         method: "POST",
@@ -94,15 +118,36 @@ const CartDropdown = () => {
         setShowOrderForm(false);
         setShowOrderConfirmation(true);
         clearCart();
+        // Optionally re-fetch products to ensure the data is up-to-date
+        await fetchProducts();
       } else {
-        alert("Order submission failed");
+        throw new Error("Order submission failed");
       }
     } catch (error) {
       console.error("Error submitting order", error);
       alert("Order submission failed");
+
+      // Revert optimistic update if the request fails
+      cartItems.items.forEach((item) => {
+        setProducts((products) =>
+          products.map((product) =>
+            product.id === item.product_id
+              ? { ...product, stock_quantity: product.stock_quantity + item.quantity }
+              : product
+          )
+        );
+      });
     }
   };
 
+  createEffect(() => {
+    fetchProducts(); // Initial fetch
+    const interval = setInterval(fetchProducts, 60000); // Poll every 60 seconds
+
+    return () => {
+      clearInterval(interval);
+    };
+  });
 
   return (
     <div class="cart-dropdown-container relative inline-block">
