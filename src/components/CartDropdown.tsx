@@ -14,13 +14,14 @@ const CartDropdown = () => {
   const toggleCart = () => setIsOpen(!isOpen());
 
   const handleQuantityChange = (item, event) => {
-    const newQuantity = Math.min(Math.max(event.target.value, 1), item.total_stock_quantity);
-    if (newQuantity <= item.total_stock_quantity) {
+    const newQuantity = Math.min(Math.max(event.target.value, 1), item.product.stock_quantity + item.quantity);
+    if (newQuantity <= item.product.stock_quantity + item.quantity) {
       updateCartItem(item.id, newQuantity);
     } else {
-      alert(`Cannot add more than ${item.total_stock_quantity} items to the cart`);
+      alert(`Cannot add more than ${item.product.stock_quantity} items to the cart`);
     }
   };
+
 
 
   const handleRemoveFromCart = (item) => {

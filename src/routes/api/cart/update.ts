@@ -37,7 +37,7 @@ export async function PUT(event: APIEvent) {
 
     const quantityDifference = quantity - cartItem.quantity;
 
-    if (product.stock_quantity < quantityDifference) {
+    if (quantityDifference > 0 && product.stock_quantity < quantityDifference) {
       return json({ status: "fail", message: "Insufficient stock." }, { status: 400 });
     }
 
@@ -57,4 +57,5 @@ export async function PUT(event: APIEvent) {
     return json({ status: "error", message: "Something went wrong" }, { status: 500 });
   }
 }
+
 

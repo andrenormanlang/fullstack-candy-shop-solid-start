@@ -69,6 +69,19 @@ export function CartProvider(props: CartProviderProps) {
 
   const addToCart = async (product: IProduct, quantity = 1) => {
     try {
+      const existingItem = cartItems.items.find(item => item.product_id === product.id);
+
+      if (existingItem) {
+        const newQuantity = existingItem.quantity + quantity;
+        if (newQuantity > product.stock_quantity) {
+          alert(`Cannot add more than ${product.stock_quantity} items to the cart`);
+          return;
+        }
+      } else if (quantity > product.stock_quantity) {
+        alert(`Cannot add more than ${product.stock_quantity} items to the cart`);
+        return;
+      }
+
       const response = await fetch('/api/cart/add', {
         method: 'POST',
         headers: {
@@ -92,7 +105,7 @@ export function CartProvider(props: CartProviderProps) {
 
       const quantityDifference = newQuantity - cartItem.quantity;
 
-      if (cartItem.product.stock_quantity < quantityDifference) {
+      if (quantityDifference > 0 && cartItem.product.stock_quantity < quantityDifference) {
         alert("Insufficient stock.");
         return;
       }
