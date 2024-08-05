@@ -2,7 +2,7 @@
 import { createContext, useContext, createEffect, createSignal, onMount } from "solid-js";
 import { createStore } from "solid-js/store";
 import { JSX } from "solid-js/jsx-runtime";
-import { IProduct } from "../types/types";
+import { IProduct, IOrderRequest, IOrderResponse } from "../types/types";
 
 type CartProviderProps = {
   children: JSX.Element;
@@ -14,7 +14,7 @@ type CartItem = {
   product: IProduct;
   quantity: number;
   created_at: string;
-  total_stock_quantity: number; // Add this field
+  total_stock_quantity: number;
 };
 
 type CartState = {
@@ -28,12 +28,14 @@ export const CartContext = createContext<{
   updateCartItem: (id: number, quantity: number) => void;
   removeFromCart: (id: number, quantity?: number) => void;
   clearCart: () => void;
+  submitOrder: (orderData: IOrderRequest) => Promise<IOrderResponse>;
 }>({
   cartItems: { items: [], total: 0 },
   addToCart: () => {},
   updateCartItem: () => {},
   removeFromCart: () => {},
   clearCart: () => {},
+  submitOrder: async () => ({ status: 'error', message: 'Not implemented', data: {} }),
 });
 
 export function useCartContext() {
@@ -48,7 +50,6 @@ export function CartProvider(props: CartProviderProps) {
       const response = await fetch('/api/cart/get');
       const result = await response.json();
       if (result.status === "success") {
-        // Assuming the API returns total_stock_quantity for each cart item
         setCartItems({ items: result.data, total: calculateTotal(result.data) });
       }
     } catch (error) {
@@ -62,22 +63,8 @@ export function CartProvider(props: CartProviderProps) {
     return items.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
   };
 
-
   const addToCart = async (product: IProduct, quantity = 1) => {
     try {
-      const existingItem = cartItems.items.find(item => item.product_id === product.id);
-
-      // if (existingItem) {
-      //   const newQuantity = existingItem.quantity + quantity;
-      //   if (newQuantity > product.stock_quantity) {
-      //     alert(`Cannot add more than ${product.stock_quantity} items to the cart`);
-      //     return;
-      //   }
-      // } else if (quantity > product.stock_quantity) {
-      //   alert(`Cannot add more than ${product.stock_quantity} items to the cart`);
-      //   return;
-      // }
-
       const response = await fetch('/api/cart/add', {
         method: 'POST',
         headers: {
@@ -96,16 +83,6 @@ export function CartProvider(props: CartProviderProps) {
 
   const updateCartItem = async (id: number, newQuantity: number) => {
     try {
-      const cartItem = cartItems.items.find(item => item.id === id);
-      if (!cartItem) return;
-
-      const quantityDifference = newQuantity - cartItem.quantity;
-
-      if (quantityDifference > 0 && cartItem.product.stock_quantity < quantityDifference) {
-        alert("Insufficient stock.");
-        return;
-      }
-
       const response = await fetch('/api/cart/update', {
         method: 'PUT',
         headers: {
@@ -156,8 +133,25 @@ export function CartProvider(props: CartProviderProps) {
     }
   };
 
+  const submitOrder = async (orderData: IOrderRequest): Promise<IOrderResponse> => {
+    try {
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData),
+      });
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error("Failed to submit order:", error);
+      return { status: 'error', message: 'Failed to submit order', data: {} };
+    }
+  };
+
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, updateCartItem, removeFromCart, clearCart }}>
+    <CartContext.Provider value={{ cartItems, addToCart, updateCartItem, removeFromCart, clearCart, submitOrder }}>
       {props.children}
     </CartContext.Provider>
   );

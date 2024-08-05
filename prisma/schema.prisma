@@ -21,10 +21,9 @@ model Product {
   items          OrderItem[]
   CartItem       CartItem[]
 }
-
 model Order {
   id                  Int         @id @default(autoincrement()) @db.UnsignedInt
-  order_date          DateTime?   @db.Date
+  order_date          DateTime    @default(now())
   customer_first_name String
   customer_last_name  String
   customer_address    String
@@ -33,10 +32,14 @@ model Order {
   customer_email      String
   customer_phone      String?
   order_total         Int         @db.UnsignedInt
-  created_at          DateTime?   @db.Timestamp()
-  updated_at          DateTime?   @db.Timestamp()
+  order_number        String
+  order_time          DateTime    @default(now())
+  created_at          DateTime    @default(now())
+  updated_at          DateTime    @updatedAt
   items               OrderItem[]
 }
+
+
 
 model OrderItem {
   id         Int     @id @default(autoincrement()) @db.UnsignedInt
@@ -51,7 +54,6 @@ model OrderItem {
   @@index([order_id], map: "OrderItem_order_id_fkey")
   @@index([product_id], map: "OrderItem_product_id_fkey")
 }
-
 model CartItem {
   id         Int      @id @default(autoincrement()) @db.UnsignedInt
   product_id Int      @db.UnsignedInt

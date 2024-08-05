@@ -12,7 +12,13 @@ export type IProduct = {
   stock_quantity: number;
 };
 
-// POST request
+export type IOrderItemRequest = {
+  product_id: number;
+  qty: number;
+  item_price: number;
+  item_total: number;
+};
+
 export type IOrderRequest = {
   order_date: string;
   customer_first_name?: string;
@@ -28,18 +34,18 @@ export type IOrderRequest = {
   order_items: IOrderItemRequest[];
 };
 
-// POST request
-export type IOrderItemRequest = {
+export interface IOrderItem {
+  id: number;
+  order_id: number;
   product_id: number;
+  product_name: string;
   qty: number;
   item_price: number;
   item_total: number;
-};
+}
 
-// Order response
-export type IOrder = {
+export interface IOrder {
   id: number;
-  [key: string]: any;
   order_date: string;
   customer_first_name: string;
   customer_last_name: string;
@@ -52,18 +58,7 @@ export type IOrder = {
   created_at: string;
   updated_at: string;
   items: IOrderItem[];
-};
-
-// Order response
-export interface IOrderItem {
-  id: number;
-  order_id: number;
-  product_id: number;
-  qty: number;
-  item_price: number;
-  item_total: number;
 }
-
 export interface IProductResponse {
   status: string;
   data: IProduct;
