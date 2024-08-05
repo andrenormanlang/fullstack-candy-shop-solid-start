@@ -16,10 +16,16 @@ const CartDropdown = () => {
   const [showOrderConfirmation, setShowOrderConfirmation] = createSignal(false);
   const [orderData, setOrderData] = createSignal<IOrder | null>(null);
   const [products, setProducts] = createSignal([]);
+  const [lastChange, setLastChange] = createSignal(0);
 
   const toggleCart = () => setIsOpen(!isOpen());
 
   const handleQuantityChange = (item, event) => {
+    const now = Date.now();
+    if (now - lastChange() < 500) {
+      return;
+    }
+    setLastChange(now);
     const newQuantity = Math.min(
       Math.max(event.target.value, 1),
       item.product.stock_quantity + item.quantity
@@ -167,7 +173,7 @@ const CartDropdown = () => {
               <div class="cart-item grid-cols-3 p-2 mb-2 bg-white dark:bg-neutral-700 rounded-lg shadow">
                 <div class="flex items-center">
                   <button
-                    class="mr-2 bg-red-500 p-1 rounded"
+                    class="mr-2 bg-red-500 p-1 rounded hover:bg-red-600 transition-colors duration-200"
                     onClick={() => promptRemoveFromCart(item)}
                   >
                     <IoTrash size={20} class="text-white" />
@@ -209,13 +215,13 @@ const CartDropdown = () => {
             Total: {cartItems.total.toFixed(2)} kr
           </div>
           <button
-            class="checkout-button block p-2 w-auto mx-auto text-white bg-yellow-500 rounded-lg mb-2"
+            class="checkout-button block p-2 w-auto mx-auto text-white bg-yellow-500 rounded-lg mb-2 hover:bg-yellow-600 transition-colors duration-200"
             onClick={handleCheckout}
           >
             To checkout
           </button>
           <button
-            class="bg-red-500 text-white p-2 rounded mt-2 w-full"
+            class="bg-red-500 text-white p-2 rounded mt-2 w-full hover:bg-red-600 transition-colors duration-200"
             onClick={promptClearCart}
           >
             Empty Cart
@@ -228,13 +234,13 @@ const CartDropdown = () => {
             <p>{modalMessage()}</p>
             <div class="flex justify-center mt-4">
               <button
-                class="bg-blue-500 text-white p-2 rounded mr-2"
+                class="bg-blue-500 text-white p-2 rounded mr-2 hover:bg-blue-600 transition-colors duration-200"
                 onClick={modalAction()}
               >
                 Yes
               </button>
               <button
-                class="bg-gray-500 text-white p-2 rounded ml-2"
+                class="bg-gray-500 text-white p-2 rounded ml-2 hover:bg-gray-600 transition-colors duration-200"
                 onClick={handleCloseModal}
               >
                 Cancel
@@ -288,13 +294,13 @@ const CartDropdown = () => {
             </div>
             <div class="flex gap-4">
               <button
-                class="bg-blue-500 text-white p-2 rounded flex-1"
+                class="bg-blue-500 text-white p-2 rounded flex-1 hover:bg-blue-600 transition-colors duration-200"
                 onClick={handleProceedToForm}
               >
                 Proceed to Form
               </button>
               <button
-                class="bg-gray-500 text-white p-2 rounded flex-1"
+                class="bg-gray-500 text-white p-2 rounded flex-1 hover:bg-gray-600 transition-colors duration-200"
                 onClick={handleOrderMore}
               >
                 Order other types of Candy
@@ -418,13 +424,13 @@ const CartDropdown = () => {
               <div class="flex justify-between">
                 <button
                   type="submit"
-                  class="bg-blue-500 text-white p-2 rounded"
+                  class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors duration-200"
                 >
                   Purchase
                 </button>
                 <button
                   type="button"
-                  class="bg-red-500 text-white p-2 rounded"
+                  class="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition-colors duration-200"
                   onClick={() => setShowOrderForm(false)}
                 >
                   Cancel
@@ -474,7 +480,7 @@ const CartDropdown = () => {
               </div>
             </div>
             <button
-              class="bg-blue-500 text-white p-2 rounded mt-4"
+              class="bg-blue-500 text-white p-2 rounded mt-4 hover:bg-blue-600 transition-colors duration-200"
               onClick={() => setShowOrderConfirmation(false)}
             >
               Close
@@ -487,3 +493,5 @@ const CartDropdown = () => {
 };
 
 export default CartDropdown;
+
+
