@@ -2,7 +2,7 @@
 import { createContext, useContext, createEffect, createSignal, onMount } from "solid-js";
 import { createStore } from "solid-js/store";
 import { JSX } from "solid-js/jsx-runtime";
-import { IProduct, IOrderRequest, IOrderResponse } from "../types/types";
+import { IProduct, IOrderRequest, IOrderResponse, IOrder } from "../types/types";
 
 type CartProviderProps = {
   children: JSX.Element;
@@ -35,7 +35,7 @@ export const CartContext = createContext<{
   updateCartItem: () => {},
   removeFromCart: () => {},
   clearCart: () => {},
-  submitOrder: async () => ({ status: 'error', message: 'Not implemented', data: {} }),
+  submitOrder: async () => ({ status: 'error', message: 'Not implemented', data: {} as IOrder }),
 });
 
 export function useCartContext() {
@@ -142,11 +142,11 @@ export function CartProvider(props: CartProviderProps) {
         },
         body: JSON.stringify(orderData),
       });
-      const result = await response.json();
+      const result: IOrderResponse = await response.json();
       return result;
     } catch (error) {
       console.error("Failed to submit order:", error);
-      return { status: 'error', message: 'Failed to submit order', data: {} };
+      return { status: 'error', message: 'Failed to submit order', data: {} as IOrder };
     }
   };
 

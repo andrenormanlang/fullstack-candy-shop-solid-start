@@ -59,6 +59,7 @@ export interface IOrder {
   updated_at: string;
   items: IOrderItem[];
 }
+
 export interface IProductResponse {
   status: string;
   data: IProduct;
