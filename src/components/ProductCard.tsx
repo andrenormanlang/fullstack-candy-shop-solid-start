@@ -5,10 +5,11 @@ interface ProductCardProps {
   product: IProduct;
   openModal: (product: IProduct) => void;
   handleAddToCart: (product: IProduct) => void;
+  class?: string;
 }
 
-const ProductCard = ({ product, openModal, handleAddToCart }: ProductCardProps) => (
-  <div class="card rounded shadow-lg transform transition duration-500 hover:scale-105 relative">
+const ProductCard = ({ product, openModal, handleAddToCart, class: className }: ProductCardProps) => (
+  <div class={`card rounded shadow-lg transform transition duration-500 hover:scale-105 relative ${className}`}>
     <div class="relative">
       <div class="relative">
         <img
@@ -48,7 +49,6 @@ const ProductCard = ({ product, openModal, handleAddToCart }: ProductCardProps) 
       >
         {product.stock_quantity === 0 ? "Sold Out" : "Add to Cart"}
       </button>
-      
     </div>
   </div>
 );

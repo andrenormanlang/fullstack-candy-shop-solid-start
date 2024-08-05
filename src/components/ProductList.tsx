@@ -1,4 +1,4 @@
-import { createSignal, onMount, For, Show, createEffect } from "solid-js";
+import { createSignal, onMount, For, Show } from "solid-js";
 import { IProduct } from "../types/types";
 import ProductCard from "./ProductCard";
 import Spinner from "./Spinner";
@@ -31,7 +31,6 @@ const ProductList = () => {
     getProducts();
   });
 
-
   const handleAddToCart = async (product: IProduct) => {
     if (product.stock_quantity > 0) {
       await addToCart(product);
@@ -51,7 +50,6 @@ const ProductList = () => {
       alert('Out of stock');
     }
   };
-
 
   const handleUpdateCartItem = async (id: number, quantity: number) => {
     await updateCartItem(id, quantity);
@@ -108,7 +106,7 @@ const ProductList = () => {
     <div class="flex flex-col items-center min-h-screen">
       <Show when={searchQuery().length > 0}>
         <p class="text-center text-black dark:text-gray-600">
-          You have {filteredProducts().length} candies with the word "<span class="font-bold text-black dark:text-white">{searchQuery()}</span>"
+          You have {filteredProducts().length} candies with the word "<span class="font-bold text-black dark:text-black">{searchQuery()}</span>"
         </p>
       </Show>
       <Show
@@ -122,6 +120,7 @@ const ProductList = () => {
                 product={product}
                 openModal={openModal}
                 handleAddToCart={handleAddToCart}
+                class="border-2 border-gray-200 dark:border-gray-700"
               />
             )}
           </For>
@@ -181,4 +180,3 @@ const ProductList = () => {
 };
 
 export default ProductList;
-
