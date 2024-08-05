@@ -53,7 +53,6 @@ const ProductList = () => {
   };
 
 
-
   const handleUpdateCartItem = async (id: number, quantity: number) => {
     await updateCartItem(id, quantity);
     setProducts((prevProducts) =>
