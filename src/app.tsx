@@ -1,12 +1,11 @@
-import { MetaProvider, Title } from "@solidjs/meta";
+import { MetaProvider } from "@solidjs/meta";
 import { Router } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
 import { Suspense, createEffect, createSignal, onMount } from "solid-js";
 import "./app.scss";
 import CartDropdown from "./components/CartDropdown";
 import { CartProvider } from "./context/CartContext";
-import { SearchProvider, useSearch } from "./context/SearchContext";
-import SearchBar from "./components/SearchBar";
+import { SearchProvider } from "./context/SearchContext";
 import ProductList from "./components/ProductList"; // Import the ProductList component
 
 export default function App() {
@@ -38,7 +37,7 @@ export default function App() {
         <div
           class={`w-full ${darkTheme() ? "bg-neutral-900 text-white" : "bg-white text-black"}`}
         >
-          <header class="bg-red-600 sticky top-0 z-10 p-4 text-xl flex items-center justify-between h-20">
+          <header class="bg-violet-700 sticky top-0 z-10 p-4 text-xl flex items-center justify-between h-32">
             <div class="flex items-center">
               <button
                 onClick={toggleTheme}
@@ -46,19 +45,17 @@ export default function App() {
               >
                 {darkTheme() ? "dark_mode" : "light_mode"}
               </button>
-              <a class="navbar-brand ml-2" href="/">
-                <img src="/logo.svg" class="max-h-9" alt="Pixie Pops Logo" />
+              <a class="navbar-brand ml-4" href="/">
+                <img src="/logo-stephanie.svg" class="max-h-16" alt="Pixie Pops Logo" />
               </a>
             </div>
             <div class="hidden sm:flex items-center flex-grow justify-center mt-4 mb-4">
-              <SearchBar />
             </div>
             <div class="flex items-center relative mr-4 mt-4">
               <CartDropdown />
             </div>
           </header>
           <div class="sm:hidden p-4 mt-4">
-            <SearchBar />
           </div>
 
           <div class="rounded-md text-center py-6">
@@ -73,9 +70,8 @@ export default function App() {
             </Router>
           </div>
 
-          {/* Add the ProductList component here */}
-          {/* <ProductList /> */}
-
+          {/* Include the ProductList component */}
+          <ProductList />
         </div>
       </SearchProvider>
     </CartProvider>

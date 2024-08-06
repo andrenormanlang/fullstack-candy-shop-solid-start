@@ -4,6 +4,7 @@ import ProductCard from "./ProductCard";
 import Spinner from "./Spinner";
 import { useCartContext } from "../context/CartContext";
 import { useSearch } from "../context/SearchContext";
+import SearchBar from "./SearchBar";
 
 const ProductList = () => {
   const [products, setProducts] = createSignal<IProduct[]>([]);
@@ -103,9 +104,12 @@ const ProductList = () => {
   };
 
   return (
-    <div class="flex flex-col items-center min-h-screen">
+    <div class="flex flex-col items-center min-h-screen p-4">
+      <div class="w-full md:w-1/2 flex justify-center mb-8">
+        <SearchBar />
+      </div>
       <Show when={searchQuery().length > 0}>
-        <p class="text-center text-black dark:text-gray-600">
+        <p class="text-center text-black dark:text-gray-600 mb-4">
           You have {filteredProducts().length} candies with the word "<span class="font-bold bg-yellow-300 text-black dark:bg-yellow-500 dark:text-black">{searchQuery()}</span>"
         </p>
       </Show>
@@ -113,7 +117,7 @@ const ProductList = () => {
         when={Array.isArray(products())}
         fallback={<Spinner type="puff" strokeOpacity={0.125} />}
       >
-        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 p-4 w-full max-w-screen-lg mx-auto mt-2">
+        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 w-full max-w-screen-lg mx-auto">
           <For each={filteredProducts()}>
             {(product: IProduct) => (
               <ProductCard
