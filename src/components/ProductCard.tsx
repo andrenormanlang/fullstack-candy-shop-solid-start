@@ -1,5 +1,6 @@
 import { IProduct } from "../types/types";
 import { AiOutlineInfoCircle } from "solid-icons/ai";
+import { Motion } from "solid-motionone";
 
 interface ProductCardProps {
   product: IProduct;
@@ -9,13 +10,17 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product, openModal, handleAddToCart, class: className }: ProductCardProps) => (
-  <div class={`card rounded shadow-lg transform transition duration-500 hover:scale-105 relative ${className} flex flex-col`}>
+  <Motion.div
+    class={`card rounded shadow-lg relative ${className} flex flex-col`}
+    animate={{ scale: [1, 1.05] }}
+    transition={{ duration: 0.3 }}
+  >
     <div class="relative flex-grow">
       <div class="relative">
         <img
           src={product.images ? `https://bortakvall.se/${product.images.thumbnail}` : "/path/to/default-thumbnail.jpg"}
           alt="product image"
-          class="w-full h-50 object-cover" // Reduced the height here
+          class="w-full h-50 object-cover"
         />
         {product.stock_quantity === 0 && (
           <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
@@ -50,7 +55,7 @@ const ProductCard = ({ product, openModal, handleAddToCart, class: className }: 
         </button>
       </div>
     </div>
-  </div>
+  </Motion.div>
 );
 
 export default ProductCard;

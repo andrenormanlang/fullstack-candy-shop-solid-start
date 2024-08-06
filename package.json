@@ -3,11 +3,14 @@
   "type": "module",
   "scripts": {
     "dev": "vinxi dev",
-    "build": "vinxi build",
+    "build": "prisma generate && vinxi build",
     "start": "vinxi start",
-    "version": "vinxi version"
+    "version": "vinxi version",
+    "prisma:generate": "prisma generate"
   },
   "dependencies": {
+    "@motionone/dom": "^10.18.0",
+    "@motionone/solid": "^10.16.4",
     "@prisma/client": "^5.17.0",
     "@solidjs/meta": "^0.29.4",
     "@solidjs/router": "^0.14.1",
@@ -17,6 +20,7 @@
     "sass": "^1.77.8",
     "solid-icons": "^1.1.0",
     "solid-js": "^1.8.19",
+    "solid-motionone": "^1.0.0",
     "solid-spinner": "^0.2.0",
     "uuid": "^10.0.0",
     "vinxi": "^0.4.1",

@@ -2,6 +2,7 @@ import { MetaProvider } from "@solidjs/meta";
 import { Router } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
 import { Suspense, createEffect, createSignal, onMount } from "solid-js";
+import { Motion } from "solid-motionone";
 import "./app.scss";
 import CartDropdown from "./components/CartDropdown";
 import { CartProvider } from "./context/CartContext";
@@ -10,6 +11,7 @@ import ProductList from "./components/ProductList"; // Import the ProductList co
 
 export default function App() {
   const [darkTheme, setDarkTheme] = createSignal(false);
+  const [clickScale, setClickScale] = createSignal(1);
 
   function toggleTheme() {
     setDarkTheme(!darkTheme());
@@ -45,9 +47,19 @@ export default function App() {
               >
                 {darkTheme() ? "dark_mode" : "light_mode"}
               </button>
-              <a class="navbar-brand ml-4" href="/">
+              <Motion.a
+                class="navbar-brand ml-4"
+                href="/"
+                initial={{ scale: 1 }}
+                animate={{ scale: clickScale() }}
+                hover={{ scale: 1.2 }}
+                onClick={() => {
+                  setClickScale(1.2);
+                  setTimeout(() => setClickScale(1), 200); // Reset scale after animation
+                }}
+              >
                 <img src="/logo-stephanie.svg" class="max-h-16" alt="Pixie Pops Logo" />
-              </a>
+              </Motion.a>
             </div>
             <div class="hidden sm:flex items-center flex-grow justify-center mt-4 mb-4">
             </div>
@@ -69,9 +81,6 @@ export default function App() {
               <FileRoutes />
             </Router>
           </div>
-
-          {/* Include the ProductList component */}
-          <ProductList />
         </div>
       </SearchProvider>
     </CartProvider>

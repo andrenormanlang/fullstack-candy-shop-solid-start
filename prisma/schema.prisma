@@ -42,18 +42,20 @@ model Order {
 
 
 model OrderItem {
-  id         Int     @id @default(autoincrement()) @db.UnsignedInt
-  product_id Int     @db.UnsignedInt
-  qty        Int     @db.UnsignedInt
-  item_price Int     @db.UnsignedInt
-  item_total Int     @db.UnsignedInt
-  order_id   Int     @db.UnsignedInt
-  product    Product @relation(fields: [product_id], references: [id])
-  order      Order   @relation(fields: [order_id], references: [id])
+  id           Int     @id @default(autoincrement()) @db.UnsignedInt
+  product_id   Int     @db.UnsignedInt
+  product_name String  // Add this line
+  qty          Int     @db.UnsignedInt
+  item_price   Int     @db.UnsignedInt
+  item_total   Int     @db.UnsignedInt
+  order_id     Int     @db.UnsignedInt
+  product      Product @relation(fields: [product_id], references: [id])
+  order        Order   @relation(fields: [order_id], references: [id])
 
   @@index([order_id], map: "OrderItem_order_id_fkey")
   @@index([product_id], map: "OrderItem_product_id_fkey")
 }
+
 model CartItem {
   id         Int      @id @default(autoincrement()) @db.UnsignedInt
   product_id Int      @db.UnsignedInt

@@ -1,16 +1,14 @@
-import { JSX } from "solid-js";
+import { Motion } from "solid-motionone";
 
-interface SpinnerProps {
-  type?: "puff"; // You can add more types if needed
-  strokeOpacity?: number;
-}
-
-const Spinner = ({ type = "puff", strokeOpacity = 1 }: SpinnerProps): JSX.Element => {
-  const spinnerStyle = {
-    opacity: strokeOpacity,
-  };
-
-  return <div class={`spinner ${type}`} style={spinnerStyle}></div>;
+const Spinner = () => {
+  return (
+    <Motion.div
+      class="w-16 h-16 border-4 border-t-4 border-t-blue-500 border-gray-200 rounded-full"
+      animate={{ rotate: [0, 360] }}
+      transition={{ duration: 1, repeat: Infinity, easing: "linear" }}
+    />
+  );
 };
 
 export default Spinner;
+

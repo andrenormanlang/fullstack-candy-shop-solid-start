@@ -6,29 +6,25 @@ import { json } from "@solidjs/router";
 const prisma = new PrismaClient();
 
 export async function POST(event: APIEvent) {
-  const data = await event.request.json();
-
   try {
-    const result = await prisma.$transaction(async (prisma) => {
-      // Check if there is sufficient stock for each item
-      for (const item of data.order_items) {
-        const product = await prisma.product.findUnique({
-          where: { id: item.product_id },
-        });
+    const data = await event.request.json();
 
-        if (!product) {
-          throw new Error(`Product with ID ${item.product_id} not found.`);
-        }
+    // Check if the products exist
+    const stockCheckPromises = data.order_items.map(async (item) => {
+      const product = await prisma.product.findUnique({
+        where: { id: item.product_id },
+      });
 
-        if (product.stock_quantity < item.qty) {
-          throw new Error(
-            `Insufficient stock for product with ID ${item.product_id}.`
-          );
-        }
+      if (!product) {
+        throw new Error(`Product with ID ${item.product_id} not found.`);
       }
+    });
 
+    await Promise.all(stockCheckPromises);
+
+    const result = await prisma.$transaction(async (transaction) => {
       // Create the order
-      const order = await prisma.order.create({
+      const order = await transaction.order.create({
         data: {
           order_date: new Date(data.order_date),
           customer_first_name: data.customer_first_name,
@@ -56,12 +52,20 @@ export async function POST(event: APIEvent) {
       });
 
       // Update the stock quantity after the order is created
-      for (const item of data.order_items) {
-        await prisma.product.update({
+      const stockUpdatePromises = data.order_items.map(async (item) => {
+        const product = await transaction.product.findUnique({
           where: { id: item.product_id },
-          data: { stock_quantity: { decrement: item.qty } },
         });
-      }
+
+        const newStockQuantity = Math.max(product.stock_quantity - item.qty, 0);
+
+        await transaction.product.update({
+          where: { id: item.product_id },
+          data: { stock_quantity: newStockQuantity },
+        });
+      });
+
+      await Promise.all(stockUpdatePromises);
 
       return order;
     });
