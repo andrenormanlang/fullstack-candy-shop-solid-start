@@ -16,16 +16,10 @@ const CartDropdown = () => {
   const [showOrderConfirmation, setShowOrderConfirmation] = createSignal(false);
   const [orderData, setOrderData] = createSignal<IOrder | null>(null);
   const [products, setProducts] = createSignal([]);
-  const [lastChange, setLastChange] = createSignal(0);
 
   const toggleCart = () => setIsOpen(!isOpen());
 
   const handleQuantityChange = (item, event) => {
-    const now = Date.now();
-    if (now - lastChange() < 500) {
-      return;
-    }
-    setLastChange(now);
     const newQuantity = Math.min(
       Math.max(event.target.value, 1),
       item.product.stock_quantity + item.quantity
@@ -83,7 +77,7 @@ const CartDropdown = () => {
   };
 
   const handleOrderMore = () => {
-    setShowCheckoutModal(false);
+    setShowLeaveSummaryModal(false);
   };
 
   const fetchProducts = async () => {
@@ -104,10 +98,7 @@ const CartDropdown = () => {
       setProducts((products) =>
         products.map((product) =>
           product.id === item.product_id
-            ? {
-                ...product,
-                stock_quantity: product.stock_quantity - item.quantity,
-              }
+            ? { ...product, stock_quantity: product.stock_quantity - item.quantity }
             : product
         )
       );
@@ -141,10 +132,7 @@ const CartDropdown = () => {
         setProducts((products) =>
           products.map((product) =>
             product.id === item.product_id
-              ? {
-                  ...product,
-                  stock_quantity: product.stock_quantity + item.quantity,
-                }
+              ? { ...product, stock_quantity: product.stock_quantity + item.quantity }
               : product
           )
         );
@@ -179,7 +167,7 @@ const CartDropdown = () => {
               <div class="cart-item grid-cols-3 p-2 mb-2 bg-white dark:bg-neutral-700 rounded-lg shadow">
                 <div class="flex items-center">
                   <button
-                    class="mr-2 bg-red-500 p-1 rounded hover:bg-red-600 transition-colors duration-200"
+                    class="mr-2 bg-red-500 p-1 rounded hover:bg-red-600"
                     onClick={() => promptRemoveFromCart(item)}
                   >
                     <IoTrash size={20} class="text-white" />
@@ -221,13 +209,13 @@ const CartDropdown = () => {
             Total: {cartItems.total.toFixed(2)} kr
           </div>
           <button
-            class="checkout-button block p-2 w-auto mx-auto text-white bg-yellow-500 rounded-lg mb-2 hover:bg-yellow-600 transition-colors duration-200"
+            class="checkout-button block p-2 w-auto mx-auto text-white bg-yellow-500 rounded-lg mb-2 hover:bg-yellow-600"
             onClick={handleCheckout}
           >
             To checkout
           </button>
           <button
-            class="bg-red-500 text-white p-2 rounded mt-2 w-full hover:bg-red-600 transition-colors duration-200"
+            class="bg-red-500 text-white p-2 rounded mt-2 w-full hover:bg-red-600"
             onClick={promptClearCart}
           >
             Empty Cart
@@ -240,13 +228,13 @@ const CartDropdown = () => {
             <p>{modalMessage()}</p>
             <div class="flex justify-center mt-4">
               <button
-                class="bg-blue-500 text-white p-2 rounded mr-2 hover:bg-blue-600 transition-colors duration-200"
+                class="bg-blue-500 text-white p-2 rounded mr-2 hover:bg-blue-600"
                 onClick={modalAction()}
               >
                 Yes
               </button>
               <button
-                class="bg-gray-500 text-white p-2 rounded ml-2 hover:bg-gray-600 transition-colors duration-200"
+                class="bg-gray-500 text-white p-2 rounded ml-2 hover:bg-gray-600"
                 onClick={handleCloseModal}
               >
                 Cancel
@@ -300,7 +288,7 @@ const CartDropdown = () => {
             </div>
             <div class="flex gap-4">
               <button
-                class="bg-blue-500 text-white p-2 rounded flex-1 hover:bg-blue-600 transition-colors duration-200"
+                class="bg-blue-500 text-white p-2 rounded flex-1 hover:bg-blue-600"
                 onClick={handleProceedToForm}
               >
                 Proceed to Form
@@ -317,7 +305,7 @@ const CartDropdown = () => {
       </Show>
       <Show when={showOrderForm()}>
         <div class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-40">
-          <div class="modal-content bg-white dark:bg-neutral-800 p-4 rounded shadow-lg max-w-lg w-full h-full max-h-full overflow-y-auto">
+          <div class="modal-content bg-white dark:bg-neutral-800 p-8 rounded shadow-lg max-w-lg w-full h-full max-h-full overflow-y-auto">
             <h2 class="text-2xl font-bold mb-4 text-center text-black dark:text-white">
               Complete Your Form
             </h2>
@@ -358,65 +346,73 @@ const CartDropdown = () => {
               }}
             >
               <div class="mb-4">
+                <label class="block text-black dark:text-white">
+                  First Name
+                </label>
                 <input
                   type="text"
                   name="first_name"
                   required
-                  placeholder="First Name"
-                  class="w-full p-2 border rounded placeholder-gray-400"
+                  class="w-full p-2 border rounded"
                 />
               </div>
               <div class="mb-4">
+                <label class="block text-black dark:text-white">
+                  Last Name
+                </label>
                 <input
                   type="text"
                   name="last_name"
                   required
-                  placeholder="Last Name"
-                  class="w-full p-2 border rounded placeholder-gray-400"
+                  class="w-full p-2 border rounded"
                 />
               </div>
               <div class="mb-4">
+                <label class="block text-black dark:text-white">Address</label>
                 <input
                   type="text"
                   name="address"
                   required
-                  placeholder="Address"
-                  class="w-full p-2 border rounded placeholder-gray-400"
+                  class="w-full p-2 border rounded"
                 />
               </div>
               <div class="mb-4">
+                <label class="block text-black dark:text-white">
+                  ZIP Code (format: 225 39)
+                </label>
                 <input
                   type="text"
                   name="postcode"
                   required
-                  placeholder="ZIP Code (format: 225 39)"
-                  class="w-full p-2 border rounded placeholder-gray-400"
+                  class="w-full p-2 border rounded"
                 />
               </div>
               <div class="mb-4">
+                <label class="block text-black dark:text-white">City</label>
                 <input
                   type="text"
                   name="city"
                   required
-                  placeholder="City"
-                  class="w-full p-2 border rounded placeholder-gray-400"
+                  class="w-full p-2 border rounded"
                 />
               </div>
               <div class="mb-4">
+                <label class="block text-black dark:text-white">E-mail</label>
                 <input
                   type="email"
                   name="email"
                   required
-                  placeholder="E-mail"
-                  class="w-full p-2 border rounded placeholder-gray-400"
+                  class="w-full p-2 border rounded"
                 />
               </div>
               <div class="mb-4">
+                <label class="block text-black dark:text-white">
+                  Telephone (format: 07/+46)
+                </label>
                 <input
                   type="text"
                   name="phone"
-                  placeholder="Telephone (format: 07/+46)"
-                  class="w-full p-2 border rounded placeholder-gray-400"
+                  class="w-full p-2 border rounded"
                 />
               </div>
               <div class="flex justify-between">
@@ -478,7 +474,7 @@ const CartDropdown = () => {
               </div>
             </div>
             <button
-              class="bg-blue-500 text-white p-2 rounded mt-4 hover:bg-blue-600 transition-colors duration-200"
+              class="bg-blue-500 text-white p-2 rounded mt-4 hover:bg-blue-600"
               onClick={() => setShowOrderConfirmation(false)}
             >
               Close
