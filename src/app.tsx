@@ -36,8 +36,8 @@ export default function App() {
   return (
     <CartProvider>
       <SearchProvider>
-        <div
-          class={`w-full ${darkTheme() ? "bg-neutral-900 text-white" : "bg-white text-black"}`}
+      <div
+          class={`bg-repeat-y bg-contain  w-full min-h-screen ${darkTheme() ? "bg-neutral-900 text-white bg-[url('/bg-candy.jpg')]" : "bg-white text-black bg-[url('bg-candy.jpg')]"}`}
         >
           <header class="bg-violet-700 sticky top-0 z-10 p-4 text-xl flex items-center justify-between h-32">
             <div class="flex items-center">

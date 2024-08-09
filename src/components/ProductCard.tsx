@@ -11,7 +11,7 @@ interface ProductCardProps {
 
 const ProductCard = ({ product, openModal, handleAddToCart, class: className }: ProductCardProps) => (
   <Motion.div
-    class={`card rounded shadow-lg relative ${className} flex flex-col`}
+    class={`card rounded shadow-lg relative ${className} flex flex-col bg-white dark:bg-red-500`}
     animate={{ scale: [1, 1.05] }}
     transition={{ duration: 0.3 }}
   >
@@ -30,7 +30,7 @@ const ProductCard = ({ product, openModal, handleAddToCart, class: className }: 
       </div>
       <AiOutlineInfoCircle
         size={24}
-        class="text-gray-800 hover:text-blue-500 transition duration-300 ease-in-out absolute top-0 right-0 m-2 cursor-pointer"
+        class="text-gray-800 dark:text-gray-300 hover:text-blue-500 transition duration-300 ease-in-out absolute top-0 right-0 m-2 cursor-pointer"
         onClick={(e) => {
           e.stopPropagation();
           openModal(product);
@@ -44,7 +44,7 @@ const ProductCard = ({ product, openModal, handleAddToCart, class: className }: 
       </div>
     </div>
     <div class="p-4 flex flex-col flex-grow justify-between">
-      <h1 class="text-lg font-bold text-center">{product.name}</h1>
+      <h1 class="text-lg font-bold text-center text-gray-900 dark:text-white">{product.name}</h1>
       <div class="flex flex-col items-center mt-4">
         <button
           class="btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
@@ -57,5 +57,6 @@ const ProductCard = ({ product, openModal, handleAddToCart, class: className }: 
     </div>
   </Motion.div>
 );
+
 
 export default ProductCard;
