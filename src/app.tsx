@@ -39,7 +39,7 @@ export default function App() {
         <Motion.div
           class={`w-full min-h-screen ${darkTheme() ? "bg-neutral-900 text-white" : "bg-white text-black"}`}
           animate={{ backgroundImage: darkTheme() ? "url('/bg-candy-dark.jpeg')" : "url('/bg-candy.jpg')" }}
-          transition={{ duration: 0.5, easing: "ease-in-out" }}
+          transition={{ duration: 2, easing: "ease-in-out" }}
           style={{ 'background-repeat': "repeat-y", 'background-size': "contain" }}
         >
           <header class="bg-violet-700 sticky top-0 z-10 p-4 text-xl flex items-center justify-between h-32">
