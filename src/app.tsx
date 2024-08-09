@@ -36,8 +36,11 @@ export default function App() {
   return (
     <CartProvider>
       <SearchProvider>
-      <div
-          class={`bg-repeat-y bg-contain  w-full min-h-screen ${darkTheme() ? "bg-neutral-900 text-white bg-[url('/bg-candy.jpg')]" : "bg-white text-black bg-[url('bg-candy.jpg')]"}`}
+        <Motion.div
+          class={`w-full min-h-screen ${darkTheme() ? "bg-neutral-900 text-white" : "bg-white text-black"}`}
+          animate={{ backgroundImage: darkTheme() ? "url('/bg-candy-dark.jpeg')" : "url('/bg-candy.jpg')" }}
+          transition={{ duration: 0.5, easing: "ease-in-out" }}
+          style={{ 'background-repeat': "repeat-y", 'background-size': "contain" }}
         >
           <header class="bg-violet-700 sticky top-0 z-10 p-4 text-xl flex items-center justify-between h-32">
             <div class="flex items-center">
@@ -81,8 +84,9 @@ export default function App() {
               <FileRoutes />
             </Router>
           </div>
-        </div>
+        </Motion.div>
       </SearchProvider>
     </CartProvider>
   );
 }
+
