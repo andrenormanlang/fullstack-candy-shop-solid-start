@@ -106,7 +106,7 @@ const ProductList = () => {
         <SearchBar />
       </div>
       <Show when={searchQuery().length > 0}>
-        <p class="text-center text-black dark:text-gray-600 mb-4">
+        <p class="font-bold text-center text-red-700 dark:text-red-600 mb-4 bg-yellow-500 dark:bg-yellow-500 text-lg">
           You have {filteredProducts().length} candies with the word "<span class="font-bold bg-yellow-300 text-black dark:bg-yellow-500 dark:text-black">{searchQuery()}</span>"
         </p>
       </Show>
