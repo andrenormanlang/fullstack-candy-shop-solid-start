@@ -102,15 +102,18 @@ const CartDropdown = () => {
   // Example: Adding product_name in the OrderItem creation
 
   const handleOrderSubmit = async (formData: IOrderRequest) => {
-    const orderItemsWithProductName = formData.order_items.map(item => {
-      const product = products().find(p => p.id === item.product_id);
+    const orderItemsWithProductName = formData.order_items.map((item) => {
+      const product = products().find((p) => p.id === item.product_id);
       return {
         ...item,
-        product_name: product.name
+        product_name: product.name,
       };
     });
 
-    const updatedFormData = { ...formData, order_items: orderItemsWithProductName };
+    const updatedFormData = {
+      ...formData,
+      order_items: orderItemsWithProductName,
+    };
 
     try {
       const response = await fetch("/api/orders/create", {
@@ -150,7 +153,6 @@ const CartDropdown = () => {
       });
     }
   };
-
 
   createEffect(() => {
     fetchProducts(); // Initial fetch
@@ -196,7 +198,11 @@ const CartDropdown = () => {
                       <IoTrash size={20} class="text-white" />
                     </button>
                     <img
-                      src={`https://bortakvall.se/${item.product.images.thumbnail}`}
+                      src={
+                        item.product.images.thumbnail.startsWith("http")
+                          ? item.product.images.thumbnail
+                          : `https://bortakvall.se/${item.product.images.thumbnail}`
+                      }
                       alt={item.product.name}
                       class="cart-item-image mr-4"
                       style={{ width: "60px", height: "60px" }}
@@ -293,10 +299,15 @@ const CartDropdown = () => {
                   {(item) => (
                     <div class="flex items-center justify-between bg-gray-100 dark:bg-gray-700 p-4 rounded-lg shadow border dark:border-gray-600">
                       <img
-                        src={`https://bortakvall.se/${item.product.images.thumbnail}`}
+                        src={
+                          item.product.images.thumbnail.startsWith("http")
+                            ? item.product.images.thumbnail
+                            : `https://bortakvall.se/${item.product.images.thumbnail}`
+                        }
                         alt={item.product.name}
                         class="mr-4 w-16 h-16 rounded"
                       />
+
                       <div class="flex-1">
                         <div class="font-bold text-center text-black dark:text-white mb-2">
                           {item.product.name}

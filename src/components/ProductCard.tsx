@@ -17,8 +17,12 @@ const ProductCard = ({ product, openModal, handleAddToCart, class: className }: 
   >
     <div class="relative flex-grow">
       <div class="relative">
-        <img
-          src={product.images ? `https://bortakvall.se/${product.images.thumbnail}` : "/path/to/default-thumbnail.jpg"}
+      <img
+          src={
+            product.images?.thumbnail.startsWith('http')
+              ? product.images.thumbnail
+              : `https://bortakvall.se/${product.images?.thumbnail}`
+          }
           alt="product image"
           class="w-full h-50 object-cover"
         />

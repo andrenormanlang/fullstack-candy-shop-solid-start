@@ -149,11 +149,15 @@ const ProductList = () => {
                   <>
                     <div class="flex flex-col items-center relative">
                       <div class="relative w-full max-w-xs mb-4">
-                        <img
-                          src={`https://bortakvall.se/${product().images?.thumbnail}`}
-                          alt="product image"
-                          class="w-full h-60 object-contain rounded-lg"
-                        />
+                      <img
+          src={
+            product().images?.thumbnail.startsWith('http')
+              ? product().images.thumbnail
+              : `https://bortakvall.se/${product().images?.thumbnail}`
+          }
+          alt="product image"
+          class="w-full h-50 object-cover"
+        />
                         {product().stock_quantity === 0 && (
                           <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center pointer-events-none">
                             <span class="text-white text-2xl font-bold">Sold Out</span>
