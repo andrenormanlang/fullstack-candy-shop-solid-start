@@ -6,9 +6,7 @@ dist
 .netlify
 .vinxi
 
-# Environment
-.env
-.env*.local
+ z<
 
 # dependencies
 /node_modules

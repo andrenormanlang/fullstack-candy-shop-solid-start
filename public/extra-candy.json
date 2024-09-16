@@ -1,0 +1,51 @@
+[
+    {
+        "name": "Katjes Vegan Tropical Fruit Gums",
+        "description": "<p>Katjes gummies are a delicious and popular type of sweet made by the German confectionery company Katjes. They come in a variety of shapes and flavors, including Katjes fruity gums and Katjes sweets. Katjes gummies are made with natural ingredients and are free from artificial colors and flavors. They are also free from preservatives and are a great snack for kids and adults alike. Katjes gummies are a great way to satisfy your sweet tooth without feeling guilty!</p>\n<p>Innehållsförteckning: Socker, glukossirap, gelatin, syra (citronsyra), naturliga aromer, färgämnen (E100, E120, E160c).</p>\n<p><em>Alla priser är per skopa.</em></p>\n",
+        "price": 40,
+        "on_sale": false,
+        "images": {
+            "large": "https://m.media-amazon.com/images/I/81R0e-vYMwL._SL1500_.jpg",
+            "thumbnail": "https://candyfunhouse.com/cdn/shop/files/cfh-2024-katjes-tropen-fruchte-candy-funhouse-front.jpg?v=1712688269"
+        },
+        "stock_status": "instock",
+        "stock_quantity": 10
+    },
+    {
+        "name": "Abdallah Coconut Delights (36 per box)",
+        "description": "<p>Coconut delights are a chocolate delight featuring the finest dark chocolate and coconut interior. The sweet treat is perfect for coconut lovers and dark chocolate lovers alike. The individually-wrapped packaging makes it perfect to take on the go or easily share.</p>\n<p>Innehållsförteckning: Socker, kokosnötsflingor, kakaosmör, HELMJÖLKSPULVER, kakaomassa, emulgeringsmedel (SOJALECITIN), naturliga aromer.</p>\n<p><em>Alla priser är per skopa.</em></p>\n",
+        "price": 300,
+        "on_sale": false,
+        "images": {
+            "large": "https://www.abdallahcandies.com/wp-content/uploads/2020/06/766684900318-scaled.jpg",
+            "thumbnail": "https://www.abdallahcandies.com/wp-content/uploads/2020/06/766684900318-scaled.jpg"
+        },
+        "stock_status": "instock",
+        "stock_quantity": 5
+    },
+    {
+        "id": 229,
+        "name": "Haribo Sour Apple Rings (1200g)",
+        "description": "<p>Sour gummy rings with a tangy apple flavor.</p>\n<p>Innehållsförteckning: Socker, glukossirap, majsstärkelse, gelatin, syra (äppelsyra), natriumcitrat, naturliga aromer, färgämnen (E133, E160a).</p>\n<p><em>Alla priser är per skopa.</em></p>\n",
+        "price": 70,
+        "on_sale": false,
+        "images": {
+            "large": "https://m.media-amazon.com/images/I/71zomaDWC0L._SL1000_.jpg",
+            "thumbnail": "https://m.media-amazon.com/images/I/71zomaDWC0L._SL1000_.jpg"
+        },
+        "stock_status": "instock",
+        "stock_quantity": 5
+    },
+    {
+        "name": "Blue Diamond Chocolate Almonds (400g)",
+        "description": "<p>Oven-roasted Dark Chocolate Almonds dusted with real cocoa and loaded with rich chocolate flavor, blended with just the right amount of sweetness from stevia extract.</p>\n<p>Innehållsförteckning: Mandlar, socker, kakaomassa, kakaosmör, HELMJÖLKSPULVER, emulgeringsmedel (SOJALECITIN), naturlig vaniljarom.</p>\n<p><em>Alla priser är per skopa.</em></p>\n",
+        "price": 70,
+        "on_sale": false,
+        "images": {
+            "large": "https://media.bluediamond.com/uploads/2022/12/09110408/snack-almonds-classic-dark-chocolate-1000x1350.png",
+            "thumbnail": "https://media.bluediamond.com/uploads/2022/12/09110408/snack-almonds-classic-dark-chocolate-1000x1350.png"
+        },
+        "stock_status": "instock",
+        "stock_quantity": 8
+    }
+]
